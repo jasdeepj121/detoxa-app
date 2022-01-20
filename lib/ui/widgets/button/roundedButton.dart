@@ -16,17 +16,17 @@ class RoundedButton extends StatelessWidget {
         onPressed: onPressed,
         style: onPressed == null
             ? ButtonStyle(
-                backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                  (Set<MaterialState> states) {
-                    if (states.contains(MaterialState.pressed)) {
-                      return Theme.of(context).primaryColor;
-                    }
-                    return Colors.white;
-                  },
-                ),
+                // backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                //   (Set<MaterialState> states) {
+                //     if (states.contains(MaterialState.pressed)) {
+                //       return Theme.of(context).primaryColor;
+                //     }
+                //     return Colors.white;
+                //   },
+                // ),
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
+                    borderRadius: BorderRadius.circular(20.0),
                   ),
                 ),
                 side: MaterialStateProperty.all<BorderSide>(const BorderSide(
@@ -35,28 +35,22 @@ class RoundedButton extends StatelessWidget {
               )
             : ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+                  borderRadius: BorderRadius.circular(20.0),
                 ),
               ),
         child: Container(
-          alignment: Alignment.center,
-          height: 50,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Expanded(
-                child: AutoSizeText(
-                  text,
-                  maxLines: 2,
-                  minFontSize: 8,
-                  // style: TextStyles.description1.copyWith(
-                  //     // color:
-                  //     //     onPressed != null ? Colors.white : AppColors.textColor,
-                  //     ),
-                  textAlign: TextAlign.center,
-                ),
-              )
-            ],
+          // alignment: Alignment.center,
+          // height: 50,
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: AutoSizeText(
+            text,
+            maxLines: 2,
+            minFontSize: 8,
+            // style: TextStyles.description1.copyWith(
+            //     // color:
+            //     //     onPressed != null ? Colors.white : AppColors.textColor,
+            //     ),
+            // textAlign: TextAlign.center,
           ),
         ));
   }

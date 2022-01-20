@@ -1,3 +1,4 @@
+import 'package:detoxa/app/ui_constants/colors/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class AppTheme {
@@ -5,35 +6,32 @@ class AppTheme {
 
   ThemeData get themeData {
     return ThemeData(
-      primaryColor: Colors.black87,
-      // primaryTextTheme: const TextTheme(
-      //     // headline1:
-      //     //     isTablet ? TextStyles.cardHeaderTablet : TextStyles.cardHeader,
-      //     // bodyText1: isTablet ? TextStyles.cardTextTablet : TextStyles.cardText,
-      //     ),
+      primaryColor: AppColors.primarySwatch,
+      colorScheme: ColorScheme.light(
+        primary: AppColors.primarySwatch,
+        secondary: AppColors.secondary.withOpacity(0.4),
+        error: Colors.red,
+      ),
       appBarTheme: const AppBarTheme(
         titleTextStyle: TextStyle(
-          color: Colors.black87,
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-          letterSpacing: -0.5,
+          color: AppColors.secondary,
         ),
-        actionsIconTheme: IconThemeData(color: Colors.black87),
-        iconTheme: IconThemeData(color: Colors.black87),
-        elevation: 0,
+        actionsIconTheme: IconThemeData(color: AppColors.secondary),
+        iconTheme: IconThemeData(color: AppColors.secondary),
         centerTitle: true,
-        // color: greyColor,
+        color: AppColors.primarySwatch,
       ),
-      colorScheme: const ColorScheme.light(
-          primary: Colors.black45, secondary: Colors.black45),
-      accentColor: Colors.black45,
-      cardTheme: CardTheme(
-        elevation: 16,
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.resolveWith<Color>(
+            (Set<MaterialState> states) => AppColors.secondary,
+          ),
+        ),
       ),
-      dialogTheme: DialogTheme(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6.0)),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          primary: AppColors.secondary,
+        ),
       ),
     );
   }

@@ -1,4 +1,7 @@
+import 'package:detoxa/app/ui_constants/strings/texts.dart';
 import 'package:detoxa/ui/routes/splashScreen/splash_screen_view_model.dart';
+import 'package:detoxa/ui/widgets/button/roundedButton.dart';
+import 'package:detoxa/ui/widgets/textfields/box_form_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 
@@ -18,9 +21,11 @@ class _SplashScreenViewState extends State<SplashScreenView> {
       viewModelBuilder: () => SplashScreenViewModel(),
       builder: (context, model, child) {
         return Scaffold(
-          body: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
+            body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Hero(
+              tag: kAppLogo,
               child: Container(
                 height: 100,
                 width: 100,
@@ -28,7 +33,7 @@ class _SplashScreenViewState extends State<SplashScreenView> {
               ),
             ),
           ),
-        );
+        ));
       },
     );
   }

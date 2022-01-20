@@ -1,8 +1,10 @@
+import 'package:detoxa/app/ui_constants/strings/texts.dart';
 import 'package:detoxa/ui/routes/auth_screens/login/login_view_model.dart';
 import 'package:detoxa/ui/widgets/button/default_button.dart';
 import 'package:detoxa/ui/widgets/button/roundedButton.dart';
 import 'package:detoxa/ui/widgets/button/roundedOutlinedButton.dart';
 import 'package:detoxa/ui/widgets/loaders/circularLoader.dart';
+import 'package:detoxa/ui/widgets/textfields/box_form_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:stacked/stacked.dart';
@@ -10,260 +12,131 @@ import 'package:stacked/stacked.dart';
 class LoginView extends StatelessWidget {
   const LoginView({Key key}) : super(key: key);
 
-  String displayTimeRemaining(int seconds) {
-    int min = 0;
-    int sec = seconds;
-    if (seconds >= 60) {
-      min = seconds ~/ 60;
-      sec = seconds % 60;
-    }
-    return "${min.toString().padLeft(2, "0")}:${sec.toString().padLeft(2, "0")}";
-  }
+  // String displayTimeRemaining(int seconds) {
+  //   int min = 0;
+  //   int sec = seconds;
+  //   if (seconds >= 60) {
+  //     min = seconds ~/ 60;
+  //     sec = seconds % 60;
+  //   }
+  //   return "${min.toString().padLeft(2, "0")}:${sec.toString().padLeft(2, "0")}";
+  // }
 
   @override
   Widget build(BuildContext context) {
     var mediaQuery = MediaQuery.of(context);
-    var primaryColor = Theme.of(context).primaryColor;
-    var outlineInputBorder = OutlineInputBorder(
-      borderSide: BorderSide(color: primaryColor),
-      borderRadius: BorderRadius.zero,
-    );
+    // var primaryColor = Theme.of(context).primaryColor;
+    // var outlineInputBorder = OutlineInputBorder(
+    //   borderSide: BorderSide(color: primaryColor),
+    //   borderRadius: BorderRadius.zero,
+    // );
     return ViewModelBuilder.reactive(
       builder: (context, LoginViewModel model, _) {
         return Scaffold(
-          backgroundColor: primaryColor,
-          resizeToAvoidBottomInset: false,
+          backgroundColor: Theme.of(context).primaryColor,
+          resizeToAvoidBottomInset: true,
           body: GestureDetector(
             onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-            child: Container(
-              width: mediaQuery.size.width,
-              height: mediaQuery.size.height,
-              // color: AppColors.fillColor,
-              padding: const EdgeInsets.all(8.0),
-              margin: EdgeInsets.only(
-                top: mediaQuery.padding.top,
-                // bottom: mediaQuery.padding.bottom,
-              ),
-              child: SingleChildScrollView(
-                child: SizedBox(
-                  height: mediaQuery.size.height -
-                      mediaQuery.padding.top -
-                      mediaQuery.padding.bottom,
-                  child: Column(
-                    children: [
-                      Expanded(
-                        flex: 4,
-                        child: Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Hero(
-                            tag: "logo",
-                            child: Image.asset(
-                              "assets/images/logos/cardio_inter.png",
-                              width: mediaQuery.size.width / 2,
-                            ),
-                          ),
-                        ),
+            child: SingleChildScrollView(
+              child: Container(
+                color: Colors.transparent,
+                width: double.maxFinite,
+                height: mediaQuery.size.height,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Hero(
+                      tag: kAppLogo,
+                      child: Container(
+                        height: 150,
+                        width: 150,
+                        color: Colors.red,
                       ),
-                      Expanded(
-                        flex: 14,
-                        child: Container(
-                          // decoration: BoxDecoration(border: Border.all()),
-                          padding: const EdgeInsets.all(12.0),
-                          child: Form(
-                            key: model.formKey,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    ),
+                    const SizedBox(height: 1),
+                    SizedBox(
+                      height: 270,
+                      child: DefaultTabController(
+                        length: 2,
+                        child: Builder(builder: (context) {
+                          return Form(
+                            child: TabBarView(
+                              physics: const NeverScrollableScrollPhysics(),
                               children: [
-                                Expanded(
-                                  flex: 8,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              flex: 1,
-                                              child: model.loginUsingOTPenabled
-                                                  ? RoundedOutlinedButton(
-                                                      onPressed: () => model
-                                                          .loginUsingOtp(false),
-                                                      text:
-                                                          "Login using Password",
-                                                    )
-                                                  : RoundedButton(
-                                                      text:
-                                                          "Login using Password",
-                                                      onPressed: () {},
-                                                    ),
-                                            ),
-                                            SizedBox(
-                                                width:
-                                                    mediaQuery.size.width / 50),
-                                            Expanded(
-                                              flex: 1,
-                                              child: !model.loginUsingOTPenabled
-                                                  ? RoundedOutlinedButton(
-                                                      onPressed: () => model
-                                                          .loginUsingOtp(true),
-                                                      text: "Login using OTP",
-                                                    )
-                                                  : RoundedButton(
-                                                      text: "Login using OTP",
-                                                      onPressed: () {},
-                                                    ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(height: 8),
-                                        Container(
-                                          // height: 60,
-                                          padding: const EdgeInsets.all(4.0),
-                                          child: TextFormField(
-                                            controller: model.mobileController,
-                                            decoration: InputDecoration(
-                                              hintText: "Mobile Number",
-                                              border: outlineInputBorder,
-                                              counterText: "",
-                                              isDense: true,
-                                            ),
-                                            maxLength: model.mobileNumberLength,
-                                            inputFormatters: [
-                                              FilteringTextInputFormatter
-                                                  .digitsOnly,
-                                            ],
-                                            keyboardType: TextInputType.number,
-                                            validator: model.mobileValidator,
-                                          ),
-                                        ),
-                                        Container(
-                                          // height: 60,
-                                          padding: const EdgeInsets.all(4.0),
-                                          child: AnimatedSwitcher(
-                                            duration:
-                                                Duration(milliseconds: 150),
-                                            child: model.loginUsingOTPenabled
-                                                ? TextFormField(
-                                                    key: ValueKey("otp"),
-                                                    controller:
-                                                        model.otpController,
-                                                    decoration: InputDecoration(
-                                                      hintText: "Enter OTP",
-                                                      border:
-                                                          outlineInputBorder,
-                                                      isDense: true,
-                                                      counterText: "",
-                                                    ),
-                                                    maxLength: model.otpLength,
-                                                    inputFormatters: [
-                                                      FilteringTextInputFormatter
-                                                          .digitsOnly,
-                                                    ],
-                                                    keyboardType:
-                                                        TextInputType.number,
-                                                    validator:
-                                                        model.otpValidator,
-                                                  )
-                                                : TextFormField(
-                                                    key: ValueKey("password"),
-                                                    controller: model
-                                                        .passwordController,
-                                                    obscureText:
-                                                        model.passwordObscured,
-                                                    decoration: InputDecoration(
-                                                      hintText: "Password",
-                                                      border:
-                                                          outlineInputBorder,
-                                                      isDense: true,
-                                                      suffixIcon: IconButton(
-                                                        icon: Icon(
-                                                          model.passwordObscured
-                                                              ? Icons.visibility
-                                                              : Icons
-                                                                  .visibility_off,
-                                                        ),
-                                                        onPressed: model
-                                                            .onPasswordObscureChanged,
-                                                      ),
-                                                    ),
-                                                    validator:
-                                                        model.passwordValidator,
-                                                  ),
-                                          ),
-                                        ),
-                                        Container(
-                                          alignment: Alignment.centerRight,
-                                          child: model.loginUsingOTPenabled
-                                              ? TextButton(
-                                                  onPressed: model.otpGenerated
-                                                      ? model.timerActive
-                                                          ? null
-                                                          : model.resendOtp
-                                                      : model.generateOTP,
-                                                  child: Text(
-                                                    model.otpGenerated
-                                                        ? model.timerActive
-                                                            ? "Time left: ${displayTimeRemaining(model.otpTimeRemaining)}"
-                                                            : "Resend OTP"
-                                                        : "Generate OTP",
-                                                  ))
-                                              : TextButton(
-                                                  onPressed:
-                                                      model.forgotPassword,
-                                                  child: const Text(
-                                                    "Forgot Password?",
-                                                  )),
-                                        ),
-                                      ],
-                                    ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 32.0),
+                                  child: Column(
+                                    children: [
+                                      Text("Lets get started"),
+                                      SizedBox(height: 16),
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text("Mobile Number*"),
+                                      ),
+                                      SizedBox(height: 6),
+                                      BoxTextFormField(),
+                                      SizedBox(height: 16),
+                                      Text("Please enter a number to proceed"),
+                                      SizedBox(height: 2),
+                                      TextButton(
+                                        onPressed: () =>
+                                            model.changeInputOption(context),
+                                        child: Text("Login with credentials?"),
+                                      ),
+                                      SizedBox(height: 2),
+                                      RoundedButton(
+                                        onPressed: model.login,
+                                        text: "Proceed to login",
+                                      )
+                                    ],
                                   ),
                                 ),
-                                Expanded(
-                                  flex: 3,
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 32.0),
                                   child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      model.isBusy
-                                          ? const SizedBox(
-                                              width: 25,
-                                              height: 25,
-                                              child: CircularLoader(),
-                                            )
-                                          : DefaultButton(
-                                              text: "LOG IN",
-                                              onPressed: model.login,
-                                            ),
-                                      GestureDetector(
-                                        onTap: model.registerUser,
-                                        child: Column(
-                                          children: [
-                                            Text(
-                                              "Not a User?",
-                                              // style: TextStyles.description1
-                                              //     .copyWith(
-                                              //         color: primaryColor),
-                                            ),
-                                            Text(
-                                              "Click here to Register",
-                                              // style: TextStyles.description1
-                                              //     .copyWith(
-                                              //         color: primaryColor),
-                                            ),
-                                          ],
+                                      const Center(
+                                          child:
+                                              Text("Login with credentials")),
+                                      SizedBox(height: 14),
+                                      Text("Enter your Email*"),
+                                      SizedBox(height: 4),
+                                      BoxTextFormField(),
+                                      SizedBox(height: 14),
+                                      Text("Enter your Password*"),
+                                      SizedBox(height: 4),
+                                      BoxTextFormField(),
+                                      SizedBox(height: 2),
+                                      Center(
+                                        child: TextButton(
+                                          onPressed: () =>
+                                              model.changeInputOption(context),
+                                          child: Text("Login with mobile?"),
                                         ),
                                       ),
+                                      // SizedBox(height: 8),
+                                      Center(
+                                        child: RoundedButton(
+                                          onPressed: model.login,
+                                          text: "Login",
+                                        ),
+                                      ),
+                                      // SizedBox(height: 2),
                                     ],
                                   ),
                                 ),
                               ],
                             ),
-                          ),
-                        ),
+                          );
+                        }),
                       ),
-                      Expanded(flex: 5, child: SizedBox(height: 0)),
-                    ],
-                  ),
+                    )
+                  ],
                 ),
               ),
             ),

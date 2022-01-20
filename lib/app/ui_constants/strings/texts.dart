@@ -1,0 +1,1 @@
+const String kAppLogo = "detox_logo";

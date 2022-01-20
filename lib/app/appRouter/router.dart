@@ -1,5 +1,6 @@
 import 'package:detoxa/ui/routes/auth_screens/login/login_view.dart';
 import 'package:detoxa/ui/routes/auth_screens/userRegistration/user_registration_view.dart';
+import 'package:detoxa/ui/routes/home_page/home_page_view.dart';
 import 'package:detoxa/ui/routes/splashScreen/splash_screen_view.dart';
 import 'package:flutter/material.dart';
 
@@ -7,8 +8,14 @@ abstract class Routes {
   static const splashScreenView = '/';
   static const loginView = '/login';
   static const userRegistratonView = '/user-registration';
+  static const homePageView = '/home';
 
-  static const all = {splashScreenView, loginView, userRegistratonView};
+  static const all = {
+    splashScreenView,
+    loginView,
+    userRegistratonView,
+    homePageView,
+  };
 }
 
 class Router {
@@ -29,7 +36,11 @@ class Router {
           builder: (context) => const UserRegistrationView(),
           settings: settings,
         );
-
+      case Routes.homePageView:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => const HomePageView(),
+          settings: settings,
+        );
       default:
         return MaterialPageRoute<dynamic>(
           builder: (context) => Scaffold(

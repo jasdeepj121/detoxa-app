@@ -14,7 +14,7 @@ class LoginViewModel extends BaseViewModel {
   final NavigationService _navigationService = locator<NavigationService>();
   final AuthService _authService = locator<AuthService>();
   final _formKey = GlobalKey<FormState>();
-  bool _loginUsingOTPenabled = false;
+  bool _loginUsingOTPenabled = true;
   final TextEditingController _mobileController = TextEditingController();
   final TextEditingController _otpController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -46,6 +46,15 @@ class LoginViewModel extends BaseViewModel {
   void loginUsingOtp(bool val) {
     _loginUsingOTPenabled = val;
     notifyListeners();
+  }
+
+  void changeInputOption(context) {
+    var index = DefaultTabController.of(context).index;
+    if (index == 0) {
+      DefaultTabController.of(context).animateTo(1);
+    } else {
+      DefaultTabController.of(context).animateTo(0);
+    }
   }
 
   void onPasswordObscureChanged() {
@@ -164,6 +173,8 @@ class LoginViewModel extends BaseViewModel {
 
   void login() async {
     try {
+      _navigationService.pushNamed(Routes.homePageView);
+      return;
       if (!_formKey.currentState.validate()) return;
       bool success = false;
       setBusy(true);
