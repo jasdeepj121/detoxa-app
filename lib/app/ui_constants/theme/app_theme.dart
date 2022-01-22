@@ -33,6 +33,14 @@ class AppTheme {
           primary: AppColors.secondary,
         ),
       ),
+      toggleableActiveColor: AppColors.secondary,
+      // inputDecorationTheme: InputDecorationTheme(
+      //   border: OutlineInputBorder(
+      //     // borderSide: BorderSide(color: primaryColor),
+      //     borderRadius: BorderRadius.circular(8),
+      //     borderSide: const BorderSide(color: AppColors.secondary),
+      //   ),
+      // ),
     );
   }
 }

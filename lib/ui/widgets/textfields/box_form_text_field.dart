@@ -10,6 +10,8 @@ class BoxTextFormField extends StatelessWidget {
   final Function(String) validator;
   final List<TextInputFormatter> inputFormatters;
   final bool obscureText;
+  final Widget suffixIcon;
+  final TextInputType keyboardType;
 
   const BoxTextFormField({
     Key key,
@@ -19,6 +21,8 @@ class BoxTextFormField extends StatelessWidget {
     this.validator,
     this.inputFormatters,
     this.obscureText,
+    this.suffixIcon,
+    this.keyboardType,
   }) : super(key: key);
 
   @override
@@ -26,6 +30,7 @@ class BoxTextFormField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       maxLength: maxLength,
+      keyboardType: keyboardType,
       decoration: InputDecoration(
         border: OutlineInputBorder(
           // borderSide: BorderSide(color: primaryColor),
@@ -34,7 +39,8 @@ class BoxTextFormField extends StatelessWidget {
         hintText: hintText,
         isDense: true,
         counterText: "",
-        contentPadding: const EdgeInsets.all(11),
+        contentPadding: const EdgeInsets.all(14),
+        suffixIcon: suffixIcon,
       ),
       inputFormatters: inputFormatters ?? [],
       validator: validator,

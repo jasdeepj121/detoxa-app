@@ -1,43 +1,44 @@
 import 'package:detoxa/app/locator/locator.dart';
+import 'package:detoxa/dataModels/login_response.dart';
 import 'package:detoxa/services/navigation/navigation_service.dart';
 import 'package:detoxa/services/network/config.dart';
 import 'package:detoxa/services/network/urls.dart';
 import 'package:detoxa/services/storage/device_storage_service.dart';
+import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 import 'package:stacked/stacked.dart';
 
 @lazySingleton
 class AuthService with ReactiveServiceMixin {
-  final int otpLength = 4;
+  // final int otpLength = 4;
   NetworkService _networkService;
   DeviceStorage _storageService;
 
   AuthService() {
     _networkService = locator<NetworkService>();
     _storageService = locator<DeviceStorage>();
-    listenToReactiveValues([]);
+    // listenToReactiveValues([]);
   }
 
-  Future<bool> loginWithPassword(String mobile, String password) async {
+  Future<bool> loginWithPassword(String email, String password) async {
     try {
       var response = await _networkService.postMethod(
         NetworkUrls.loginWithPassword,
         data: {
-          "phone": mobile,
+          "email": email,
           "password": password,
         },
       );
-      print("");
-      // String token =
-      //     (response.data["data"] as Map<String, dynamic>)["access_token"];
-      // await _storageService.setAccessToken(token);
+      if (response.statusCode >= 300) throw response;
+      var responseData = LoginResponse.fromJson(response.data);
+      await _storageService.setAccessToken(responseData.token);
       return true;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<bool> loginWithOtp(String mobile, int otp) async {
+  Future<bool> loginWithOtp(String mobile, String otp) async {
     try {
       var response = await _networkService.postMethod(
         NetworkUrls.loginWithoutPassword,
@@ -46,80 +47,52 @@ class AuthService with ReactiveServiceMixin {
           "login_otp": otp,
         },
       );
-      String token =
-          (response.data["data"] as Map<String, dynamic>)["access_token"];
-      await _storageService.setAccessToken(token);
+      if (response.statusCode >= 300) throw response;
+      var responseData = LoginResponse.fromJson(response.data);
+      await _storageService.setAccessToken(responseData.token);
       return true;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<bool> generateOtp(int mobile) async {
+  Future<bool> generateOtp(String mobile) async {
     try {
       var response = await _networkService.postMethod(
         NetworkUrls.generateSignInOtp,
-        data: {"phone": mobile},
+        data: {"mobile_no": mobile},
       );
-      if (response.statusCode != 200) throw response;
+      if (response.statusCode >= 300) throw response;
       return true;
     } catch (e) {
       rethrow;
     }
   }
 
-  // Future updateOtp(int mobile) async {
-  //   try {
-  //     var response = await _networkService.postMethod(
-  //       NetworkUrls.updateOTP,
-  //       data: {"phone": mobile},
-  //     );
-  //     if (response.statusCode != 200) throw response;
-  //     return true;
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
-
-  // Future<bool> userRegistrationValidation(RegisterUser details) async {
-  //   try {
-  //     var response = await _networkService.postMethod(
-  //       NetworkUrls.userRegistrationFormValidation,
-  //       data: details.toJson(),
-  //     );
-  //     if (response.statusCode != 200) throw response;
-  //     if ((response.data["success"]) == false) throw response;
-  //     return true;
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
-
-  // Future<bool> userRegistration(RegisterUser details) async {
-  //   try {
-  //     var response = await _networkService.postMethod(
-  //       NetworkUrls.userRegistration,
-  //       data: details.toJson(),
-  //     );
-  //     if (response.statusCode != 200) throw response;
-  //     return true;
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
-
-  // Future<RegistrationFormData> fetchRegistrationFormData() async {
-  //   try {
-  //     var response = await _networkService.getMethod(
-  //       NetworkUrls.userRegistrationFormData,
-  //     );
-  //     if (response.statusCode != 200) throw response;
-  //     return RegistrationFormData.fromJson(response.data);
-  //   } catch (e) {
-  //     print(e.toString());
-  //     rethrow;
-  //   }
-  // }
+  Future<bool> registerUser({
+    @required String email,
+    @required String phone,
+    @required String name,
+    @required String password,
+    @required bool termsAccepted,
+  }) async {
+    try {
+      var response = await _networkService.postMethod(
+        NetworkUrls.register,
+        data: {
+          "mobile": "91$phone",
+          "email": email,
+          "password": password,
+          "full_name": name,
+          "is_tnc_accepted": termsAccepted,
+        },
+      );
+      if (response.statusCode >= 300) throw response;
+      return true;
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   // Future<bool> forgotPassword(String email) async {
   //   try {
@@ -154,26 +127,16 @@ class AuthService with ReactiveServiceMixin {
   //   }
   // }
 
-  void logout() {
+  void logout() async {
     try {
+      var response = await _networkService.postMethod(
+        NetworkUrls.signout,
+      );
+      if (response.statusCode >= 300) throw response;
       locator<DeviceStorage>().clearData();
       locator<NavigationService>().pop();
-      // locator<NavigationService>().pushNamed(Routes.loginView);
     } catch (e) {
       rethrow;
     }
   }
-
-  // Future<String> editProfile() async {
-  //   try {
-  //     // var response = await _networkService.postMethod(
-  //     //   NetworkUrls.update,
-  //     //   data: updatedUser.toJson(),
-  //     // );
-  //     // if (response.statusCode != 200) throw response;
-  //     // return response.data["message"];
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
 }

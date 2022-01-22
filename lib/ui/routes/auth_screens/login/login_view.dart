@@ -30,18 +30,36 @@ class LoginView extends StatelessWidget {
     //   borderSide: BorderSide(color: primaryColor),
     //   borderRadius: BorderRadius.zero,
     // );
+
+    String displayTimeRemaining(int seconds) {
+      int min = 0;
+      int sec = seconds;
+      if (seconds >= 60) {
+        min = seconds ~/ 60;
+        sec = seconds % 60;
+      }
+      return "${min.toString().padLeft(2, "0")}:${sec.toString().padLeft(2, "0")}";
+    }
+
+    SizedBox _height(double height) {
+      return SizedBox(height: height);
+    }
+
     return ViewModelBuilder.reactive(
       builder: (context, LoginViewModel model, _) {
         return Scaffold(
-          backgroundColor: Theme.of(context).primaryColor,
+          // backgroundColor: Theme.of(context).primaryColor,
           resizeToAvoidBottomInset: true,
           body: GestureDetector(
             onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-            child: SingleChildScrollView(
-              child: Container(
-                color: Colors.transparent,
-                width: double.maxFinite,
-                height: mediaQuery.size.height,
+            child: Container(
+              // decoration: BoxDecoration(
+              //   border: Border.all(width: 5, color: Colors.yellow),
+              //   color: Colors.transparent,
+              // ),
+              width: double.maxFinite,
+              height: mediaQuery.size.height,
+              child: SingleChildScrollView(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -55,12 +73,15 @@ class LoginView extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 1),
+                    Text("Lets get started"),
+                    SizedBox(height: 16),
                     SizedBox(
-                      height: 270,
+                      height: 400,
                       child: DefaultTabController(
                         length: 2,
                         child: Builder(builder: (context) {
                           return Form(
+                            key: model.formKey,
                             child: TabBarView(
                               physics: const NeverScrollableScrollPhysics(),
                               children: [
@@ -69,27 +90,105 @@ class LoginView extends StatelessWidget {
                                       horizontal: 32.0),
                                   child: Column(
                                     children: [
-                                      Text("Lets get started"),
-                                      SizedBox(height: 16),
-                                      Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text("Mobile Number*"),
+                                      Column(
+                                        key: const ValueKey("mobile"),
+                                        children: [
+                                          const Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text("Mobile Number"),
+                                          ),
+                                          _height(4),
+                                          BoxTextFormField(
+                                            controller: model.mobileController,
+                                            validator: model.mobileValidator,
+                                            keyboardType: TextInputType.number,
+                                            maxLength: 10,
+                                            inputFormatters: [
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly
+                                            ],
+                                          ),
+                                          _height(16),
+                                          const Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text("Otp"),
+                                          ),
+                                          _height(4),
+                                          BoxTextFormField(
+                                            controller: model.otpController,
+                                            validator: model.otpValidator,
+                                            keyboardType: TextInputType.number,
+                                            inputFormatters: [
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly
+                                            ],
+                                          ),
+                                          Align(
+                                            alignment: Alignment.centerRight,
+                                            child: TextButton(
+                                              onPressed: model.otpGenerated
+                                                  ? model.timerActive
+                                                      ? null
+                                                      : model.resendOtp
+                                                  : model.generateOTP,
+                                              style: TextButton.styleFrom(
+                                                // padding:EdgeInsets.zero,
+                                                // tapTargetSize:
+                                                // MaterialTapTargetSize.shrinkWrap,
+                                                visualDensity:
+                                                    VisualDensity.compact,
+                                              ),
+                                              child: Text(
+                                                model.otpGenerated
+                                                    ? model.timerActive
+                                                        ? "Time left: ${displayTimeRemaining(model.otpTimeRemaining)}"
+                                                        : "Resend OTP"
+                                                    : "Generate OTP",
+                                              ),
+                                            ),
+                                          ),
+                                          // const Text(
+                                          //   "Please enter a mobile number to proceed",
+                                          // ),
+                                        ],
                                       ),
-                                      SizedBox(height: 6),
-                                      BoxTextFormField(),
-                                      SizedBox(height: 16),
-                                      Text("Please enter a number to proceed"),
-                                      SizedBox(height: 2),
                                       TextButton(
                                         onPressed: () =>
                                             model.changeInputOption(context),
                                         child: Text("Login with credentials?"),
+                                        style: TextButton.styleFrom(
+                                          // padding:EdgeInsets.zero,
+                                          // tapTargetSize:
+                                          // MaterialTapTargetSize.shrinkWrap,
+                                          visualDensity: VisualDensity.compact,
+                                        ),
                                       ),
-                                      SizedBox(height: 2),
-                                      RoundedButton(
-                                        onPressed: model.login,
-                                        text: "Proceed to login",
-                                      )
+                                      model.isBusy
+                                          ? const Padding(
+                                              padding: EdgeInsets.all(10.0),
+                                              child: SizedBox(
+                                                width: 28,
+                                                height: 28,
+                                                child: CircularLoader(),
+                                              ),
+                                            )
+                                          : RoundedButton(
+                                              onPressed: model.login,
+                                              text: "Verify and Login",
+                                            ),
+
+                                      TextButton(
+                                        onPressed: model.registerUser,
+                                        child: Text("Register"),
+                                        style: TextButton.styleFrom(
+                                            // padding:EdgeInsets.zero,
+                                            // tapTargetSize:
+                                            //     MaterialTapTargetSize.shrinkWrap,
+                                            // visualDensity: VisualDensity.compact,
+                                            ),
+                                      ),
+                                      // model.otpGenerated?
+                                      // TextButton(onPressed: mod, child: child)
                                     ],
                                   ),
                                 ),
@@ -100,32 +199,75 @@ class LoginView extends StatelessWidget {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const Center(
-                                          child:
-                                              Text("Login with credentials")),
-                                      SizedBox(height: 14),
-                                      Text("Enter your Email*"),
-                                      SizedBox(height: 4),
-                                      BoxTextFormField(),
-                                      SizedBox(height: 14),
-                                      Text("Enter your Password*"),
-                                      SizedBox(height: 4),
-                                      BoxTextFormField(),
-                                      SizedBox(height: 2),
-                                      Center(
-                                        child: TextButton(
-                                          onPressed: () =>
-                                              model.changeInputOption(context),
-                                          child: Text("Login with mobile?"),
+                                      Text("Enter your Email"),
+                                      _height(4),
+                                      BoxTextFormField(
+                                        controller: model.emailController,
+                                        validator: model.emailValidator,
+                                        keyboardType:
+                                            TextInputType.emailAddress,
+                                      ),
+                                      _height(14),
+                                      Text("Enter your Password"),
+                                      _height(4),
+                                      BoxTextFormField(
+                                        controller: model.passwordController,
+                                        validator: model.passwordValidator,
+                                        obscureText: model.passwordObscured,
+                                        suffixIcon: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(48),
+                                          child: IconButton(
+                                            icon: model.passwordObscured
+                                                ? const Icon(Icons.visibility)
+                                                : const Icon(
+                                                    Icons.visibility_off),
+                                            onPressed:
+                                                model.onPasswordObscureChanged,
+                                            visualDensity:
+                                                VisualDensity.compact,
+                                            padding: const EdgeInsets.all(0),
+                                          ),
                                         ),
                                       ),
-                                      // SizedBox(height: 8),
+                                      _height(2),
                                       Center(
-                                        child: RoundedButton(
-                                          onPressed: model.login,
-                                          text: "Login",
+                                        child: Column(
+                                          children: [
+                                            TextButton(
+                                              onPressed: () => model
+                                                  .changeInputOption(context),
+                                              child: Text("Login with mobile?"),
+                                            ),
+                                            // SizedBox(height: 8),
+                                            model.isBusy
+                                                ? const Padding(
+                                                    padding:
+                                                        EdgeInsets.all(10.0),
+                                                    child: SizedBox(
+                                                      width: 28,
+                                                      height: 28,
+                                                      child: CircularLoader(),
+                                                    ),
+                                                  )
+                                                : RoundedButton(
+                                                    onPressed: model.login,
+                                                    text: "Login",
+                                                  ),
+                                            TextButton(
+                                              onPressed: model.registerUser,
+                                              child: Text("Register"),
+                                              style: TextButton.styleFrom(
+                                                  // padding:EdgeInsets.zero,
+                                                  // tapTargetSize:
+                                                  //     MaterialTapTargetSize
+                                                  //         .shrinkWrap,
+                                                  // visualDensity: VisualDensity.compact,
+                                                  ),
+                                            ),
+                                          ],
                                         ),
-                                      ),
+                                      )
                                       // SizedBox(height: 2),
                                     ],
                                   ),

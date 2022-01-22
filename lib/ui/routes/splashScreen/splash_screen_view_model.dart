@@ -20,11 +20,10 @@ class SplashScreenViewModel extends BaseViewModel {
 
   void nextScreen() {
     // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
-    // if ((_storage.accessToken ?? "").isEmpty) {
-    //   _navigationService.pushReplacementNamed(Routes.loginView);
-    // } else {
-    //   _navigationService.pushReplacementNamed(Routes.tabRoute);
-    // }
-    _navigationService.pushReplacementNamed(Routes.loginView);
+    if ((_storage.accessToken ?? "").isEmpty) {
+      _navigationService.pushReplacementNamed(Routes.loginView);
+    } else {
+      _navigationService.pushReplacementNamed(Routes.homePageView);
+    }
   }
 }

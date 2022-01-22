@@ -34,41 +34,41 @@ class NetworkService {
       InterceptorsWrapper(
         onRequest: (RequestOptions options, RequestInterceptorHandler handler) {
           if (accessToken != null) {
-            options.headers["Authorization"] = "Bearer $accessToken";
+            options.headers["X-CSRFToken"] = accessToken;
           }
           return handler.next(options);
         },
         onError: (DioError error, ErrorInterceptorHandler errorHandler) async {
-          if (error.response?.statusCode == 401) {
-            try {
-              _dio.interceptors.requestLock.lock();
-              _dio.interceptors.responseLock.lock();
-              RequestOptions options = error.response.requestOptions;
-              await updateToken(error.response.data["data"]["access_token"]);
-              options.headers["Authorization"] = "Bearer $accessToken";
-              _dio.interceptors.requestLock.unlock();
-              _dio.interceptors.responseLock.unlock();
-              Response apiResponse;
-              if (error.requestOptions.method == "GET") {
-                apiResponse = await _dio.get(options.path);
-              } else if (error.requestOptions.method == "POST") {
-                apiResponse = await _dio.post(options.path, data: options.data);
-              } else if (error.requestOptions.method == "PATCH") {
-                apiResponse =
-                    await _dio.patch(options.path, data: options.data);
-              }
-              return errorHandler.resolve(apiResponse);
-            } catch (e) {
-              _dio.interceptors.requestLock.unlock();
-              _dio.interceptors.responseLock.unlock();
-              print("inside catch of refresh token");
-              return errorHandler.next(error);
-            }
-          } else if (error.response?.statusCode == 403) {
-            //force log out
-            locator<AuthService>().logout();
-            // errorHandler.next(error);
-          }
+          // if (error.response?.statusCode == 401) {
+          //   try {
+          //     _dio.interceptors.requestLock.lock();
+          //     _dio.interceptors.responseLock.lock();
+          //     RequestOptions options = error.response.requestOptions;
+          //     await updateToken(error.response.data["data"]["access_token"]);
+          //     options.headers["Authorization"] = "Bearer $accessToken";
+          //     _dio.interceptors.requestLock.unlock();
+          //     _dio.interceptors.responseLock.unlock();
+          //     Response apiResponse;
+          //     if (error.requestOptions.method == "GET") {
+          //       apiResponse = await _dio.get(options.path);
+          //     } else if (error.requestOptions.method == "POST") {
+          //       apiResponse = await _dio.post(options.path, data: options.data);
+          //     } else if (error.requestOptions.method == "PATCH") {
+          //       apiResponse =
+          //           await _dio.patch(options.path, data: options.data);
+          //     }
+          //     return errorHandler.resolve(apiResponse);
+          //   } catch (e) {
+          //     _dio.interceptors.requestLock.unlock();
+          //     _dio.interceptors.responseLock.unlock();
+          //     print("inside catch of refresh token");
+          //     return errorHandler.next(error);
+          //   }
+          // } else if (error.response?.statusCode == 403) {
+          //   //force log out
+          //   locator<AuthService>().logout();
+          //   // errorHandler.next(error);
+          // }
           errorHandler.next(error);
         },
       ),

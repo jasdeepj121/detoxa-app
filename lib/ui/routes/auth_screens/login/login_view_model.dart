@@ -4,7 +4,8 @@ import 'package:detoxa/app/appRouter/router.dart';
 import 'package:detoxa/app/locator/locator.dart';
 import 'package:detoxa/services/auth/auth_service.dart';
 import 'package:detoxa/services/navigation/navigation_service.dart';
-import 'package:detoxa/ui/widgets/dialogs/errorDialog.dart';
+import 'package:detoxa/ui/widgets/dialogs/error_dialog.dart';
+import 'package:detoxa/utils/email_validator.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -16,24 +17,27 @@ class LoginViewModel extends BaseViewModel {
   final _formKey = GlobalKey<FormState>();
   bool _loginUsingOTPenabled = true;
   final TextEditingController _mobileController = TextEditingController();
+
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _otpController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   Timer _otpTimer;
   final int _waitingDurationInSeconds = 120;
   int _resendCounterValue;
-  int _otpGeneratedForNumber;
+  String _otpGeneratedForNumber;
 
   bool passwordObscured = true;
   int mobileNumberLength = 10;
   int otpLength;
 
   LoginViewModel() {
-    otpLength = _authService.otpLength;
+    // otpLength = _authService.otpLength;
   }
 
   TextEditingController get mobileController => _mobileController;
   TextEditingController get otpController => _otpController;
   TextEditingController get passwordController => _passwordController;
+  TextEditingController get emailController => _emailController;
 
   bool get loginUsingOTPenabled => _loginUsingOTPenabled;
   bool get timerActive => _otpTimer?.isActive ?? false;
@@ -43,17 +47,22 @@ class LoginViewModel extends BaseViewModel {
 
   GlobalKey<FormState> get formKey => _formKey;
 
-  void loginUsingOtp(bool val) {
-    _loginUsingOTPenabled = val;
-    notifyListeners();
-  }
+  // void loginUsingOtp(bool val) {
+  //   _loginUsingOTPenabled = val;
+  //   notifyListeners();
+  // }
 
   void changeInputOption(context) {
+    if (isBusy) {
+      return;
+    }
     var index = DefaultTabController.of(context).index;
     if (index == 0) {
       DefaultTabController.of(context).animateTo(1);
+      _loginUsingOTPenabled = false;
     } else {
       DefaultTabController.of(context).animateTo(0);
+      _loginUsingOTPenabled = true;
     }
   }
 
@@ -63,8 +72,8 @@ class LoginViewModel extends BaseViewModel {
   }
 
   String mobileValidator(String val) {
-    if (val.length == 0) {
-      return "No mobile number provided";
+    if ((val ?? "").isEmpty) {
+      return "Mobile number cannot be left blank";
     }
     if (val.length != 10) {
       return "Invalid mobile number";
@@ -72,51 +81,70 @@ class LoginViewModel extends BaseViewModel {
     return null;
   }
 
+  String emailValidator(String val) {
+    if ((val ?? "").isEmpty) {
+      return "Email cannot be left blank";
+    }
+    if (!(EmailValidator.validate(val))) {
+      return "Invalid email";
+    }
+    return null;
+  }
+
   String passwordValidator(String val) {
     if (_loginUsingOTPenabled) return null;
-    if (val.length == 0) {
-      return "No password provided";
+    if ((val ?? "").isEmpty) {
+      return "Password cannot be left blank";
     }
     return null;
   }
 
   String otpValidator(String val) {
     if (!_loginUsingOTPenabled) return null;
-    if (val.length == 0) {
+    if (_otpGeneratedForNumber != mobileController.text.trim()) return null;
+    if ((val ?? "").isEmpty) {
       return "No OTP provided";
     }
-    if (val.length != otpLength) {
-      return "Invalid OTP provided";
-    }
+    // if (val.length != otpLength) {
+    //   return "Invalid OTP provided";
+    // }
     return null;
   }
 
   void registerUser() {
-    // _navigationService.pushNamed(Routes.userRegistrationView);
+    if (isBusy) {
+      return;
+    }
+    _navigationService.pushNamed(Routes.userRegistratonView);
   }
 
-  void forgotPassword() {
-    // _navigationService.pushNamed(Routes.forgotPasswordView);
-  }
+  // void forgotPassword() {
+  // _navigationService.pushNamed(Routes.forgotPasswordView);
+  // }
 
   void generateOTP() async {
     try {
-      if (_mobileController.text.length != mobileNumberLength)
-        throw ("Invalid mobile number provided");
+      if (isBusy) {
+        return;
+      }
+      if (!_formKey.currentState.validate()) return;
       setBusy(true);
-      if (await _authService.generateOtp(int.parse(_mobileController.text))) {
+      if (await _authService.generateOtp(_mobileController.text)) {
         startResendCodeTimer();
-        _otpGeneratedForNumber = int.parse(_mobileController.text);
+        _otpGeneratedForNumber = _mobileController.text.trim();
       }
       setBusy(false);
     } catch (e) {
       setBusy(false);
       String message;
       if (e is DioError) {
-        message = e.response.data["message"];
+        if (e.response.data is Map) {
+          Map resp = e.response.data;
+          message = (resp.entries.first.value as List).first.toString();
+        }
       }
       if (e is String) {
-        message = e;
+        message = e.toString();
       }
       _navigationService.displayDialog(ErrorDialog(
         message: message,
@@ -126,12 +154,10 @@ class LoginViewModel extends BaseViewModel {
 
   void resendOtp() async {
     try {
-      if (_mobileController.text.length != mobileNumberLength)
-        throw ("Invalid mobile number provided");
       setBusy(true);
-      if (await _authService.generateOtp(int.parse(_mobileController.text))) {
+      if (await _authService.generateOtp(_mobileController.text)) {
         startResendCodeTimer();
-        _otpGeneratedForNumber = int.parse(_mobileController.text);
+        _otpGeneratedForNumber = _mobileController.text;
       }
       setBusy(false);
     } catch (e) {
@@ -144,12 +170,6 @@ class LoginViewModel extends BaseViewModel {
     }
   }
 
-  void updateOtp() async {
-    // try {
-    //   _authService.updateOtp(_otpGeneratedForNumber);
-    // } catch (_) {}
-  }
-
   void startResendCodeTimer() {
     _resendCounterValue = _waitingDurationInSeconds;
     stopResendCodeTime();
@@ -157,7 +177,6 @@ class LoginViewModel extends BaseViewModel {
     _otpTimer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (_resendCounterValue <= 1) {
         stopResendCodeTime();
-        updateOtp();
       } else {
         _resendCounterValue -= 1;
       }
@@ -173,21 +192,19 @@ class LoginViewModel extends BaseViewModel {
 
   void login() async {
     try {
-      _navigationService.pushNamed(Routes.homePageView);
-      return;
       if (!_formKey.currentState.validate()) return;
       bool success = false;
       setBusy(true);
-      // if (_loginUsingOTPenabled) {
-      //   success = await _authService.loginWithOtp(_mobileController.text.trim(),
-      //       int.parse(_otpController.text.trim()));
-      // } else {
-      //   success = await _authService.loginWithPassword(
-      //       _mobileController.text.trim(), _passwordController.text.trim());
-      // }
+      if (_loginUsingOTPenabled) {
+        success = await _authService.loginWithOtp(
+            _mobileController.text.trim(), _otpController.text.trim());
+      } else {
+        success = await _authService.loginWithPassword(
+            _emailController.text.trim(), _passwordController.text.trim());
+      }
       if (!success) throw Error;
       // await _authService.getUserProfile();
-      // _navigationService.pushReplacementNamed(Routes.tabRoute);
+      _navigationService.pushReplacementNamed(Routes.homePageView);
       setBusy(false);
     } catch (e) {
       setBusy(false);
@@ -206,9 +223,10 @@ class LoginViewModel extends BaseViewModel {
   @override
   void dispose() {
     stopResendCodeTime();
-    _otpController.dispose();
-    _mobileController.dispose();
-    _passwordController.dispose();
+    _otpController?.dispose();
+    _mobileController?.dispose();
+    _passwordController?.dispose();
+    _emailController?.dispose();
     super.dispose();
   }
 }
