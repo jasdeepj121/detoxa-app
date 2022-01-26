@@ -4,6 +4,7 @@ import 'package:detoxa/app/appRouter/router.dart';
 import 'package:detoxa/app/locator/locator.dart';
 import 'package:detoxa/services/auth/auth_service.dart';
 import 'package:detoxa/services/navigation/navigation_service.dart';
+import 'package:detoxa/ui/widgets/cards/otpVerifyCard.dart';
 import 'package:detoxa/ui/widgets/dialogs/error_dialog.dart';
 import 'package:detoxa/utils/email_validator.dart';
 import 'package:dio/dio.dart';
@@ -101,7 +102,8 @@ class LoginViewModel extends BaseViewModel {
 
   String otpValidator(String val) {
     if (!_loginUsingOTPenabled) return null;
-    if (_otpGeneratedForNumber != mobileController.text.trim()) return null;
+    if (_otpGeneratedForNumber == null) return null;
+    if (_otpGeneratedForNumber == mobileController.text.trim()) return null;
     if ((val ?? "").isEmpty) {
       return "No OTP provided";
     }
@@ -196,8 +198,16 @@ class LoginViewModel extends BaseViewModel {
       bool success = false;
       setBusy(true);
       if (_loginUsingOTPenabled) {
-        success = await _authService.loginWithOtp(
-            _mobileController.text.trim(), _otpController.text.trim());
+        // success = await _authService.loginWithOtp(
+        //     _mobileController.text.trim(), _otpController.text.trim());
+        var response = await _navigationService.displayDialog(
+          OtpVerificationCard(mobile: _mobileController.text.trim()),
+          barrierDismissible: false,
+        );
+        if (response == null) {
+          setBusy(false);
+          return;
+        }
       } else {
         success = await _authService.loginWithPassword(
             _emailController.text.trim(), _passwordController.text.trim());
@@ -212,8 +222,6 @@ class LoginViewModel extends BaseViewModel {
       if (e is DioError) {
         if (e.error is SocketException) {
           message = "Internet not available";
-        } else {
-          message = e.response.data["message"];
         }
       }
       _navigationService.displayDialog(ErrorDialog(message: message));

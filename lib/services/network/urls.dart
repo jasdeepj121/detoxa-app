@@ -1,7 +1,5 @@
 class NetworkUrls {
-  static String baseUrlProd =
-      "https://django-rest-python.herokuapp.com/detoxa-services/";
-
+  static String baseUrlProd = "https://dev.detoxa.in/detoxa-services/";
   //auth
   static String generateSignInOtp = "auth/user/generateSignInOtp";
   static String loginWithoutPassword = "auth/user/login/passwordless";
@@ -10,4 +8,18 @@ class NetworkUrls {
   static String signout = "auth/user/signout";
   static String updatePassword = "auth/user/update/password";
   static String update = "auth/user/update";
+
+  static String getChildList = "/user/child";
+  static String createChild = "/user/child";
+  static String deleteChild = "/user/child/delete";
+  static String getChildDetails = "/user/child/details";
+  static String updateChildDetails = "/user/child/update";
+  // static String a = "";
+  // static String a = "";  // static String a = "";
+  // static String a = "";
+  // static String a = "";  // static String a = "";
+  // static String a = "";
+  // static String a = "";
+  // static String a = "";
+
 }

@@ -34,7 +34,7 @@ class NetworkService {
       InterceptorsWrapper(
         onRequest: (RequestOptions options, RequestInterceptorHandler handler) {
           if (accessToken != null) {
-            options.headers["X-CSRFToken"] = accessToken;
+            options.headers["Authorization"] = accessToken;
           }
           return handler.next(options);
         },
@@ -99,6 +99,15 @@ class NetworkService {
   Future<Response> patchMethod(String url,
       {dynamic data, Map<String, dynamic> queryParameters}) {
     return _dio.patch(
+      url,
+      queryParameters: queryParameters,
+      data: data,
+    );
+  }
+
+  Future<Response> deleteMethod(String url,
+      {dynamic data, Map<String, dynamic> queryParameters}) {
+    return _dio.delete(
       url,
       queryParameters: queryParameters,
       data: data,

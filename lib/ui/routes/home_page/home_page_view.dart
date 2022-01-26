@@ -23,7 +23,7 @@ class _HomePageViewState extends State<HomePageView> {
     return ViewModelBuilder<HomePageViewModel>.reactive(
       builder: (context, HomePageViewModel model, _) {
         return Scaffold(
-          drawer: Container(
+          drawer: SizedBox(
             width: 250,
             child: Drawer(
               child: SideDrawer(),
@@ -109,6 +109,8 @@ class _HomePageViewState extends State<HomePageView> {
                               color: shortcut.color,
                               isSelected: true,
                               textGroup: model.subShortcutGroup,
+                              onPressed: () =>
+                                  model.onLinkPressed(shortcut.link),
                             ),
                           );
                         },

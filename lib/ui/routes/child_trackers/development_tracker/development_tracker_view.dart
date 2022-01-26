@@ -1,24 +1,22 @@
 import 'package:detoxa/app/ui_constants/strings/texts.dart';
+import 'package:detoxa/ui/routes/child_trackers/development_tracker/development_tracker_view_model.dart';
 import 'package:detoxa/ui/routes/splashScreen/splash_screen_view_model.dart';
-import 'package:detoxa/ui/widgets/button/roundedButton.dart';
-import 'package:detoxa/ui/widgets/textfields/box_form_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 
-class SplashScreenView extends StatefulWidget {
-  const SplashScreenView({Key key}) : super(key: key);
+class DevelopmentTrackerView extends StatefulWidget {
+  const DevelopmentTrackerView({Key key}) : super(key: key);
 
   @override
-  _SplashScreenViewState createState() => _SplashScreenViewState();
+  _DevelopmentTrackerViewState createState() => _DevelopmentTrackerViewState();
 }
 
-class _SplashScreenViewState extends State<SplashScreenView> {
+class _DevelopmentTrackerViewState extends State<DevelopmentTrackerView> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-
-    return ViewModelBuilder<SplashScreenViewModel>.reactive(
-      viewModelBuilder: () => SplashScreenViewModel(),
+    return ViewModelBuilder<DevelopmentTrackerViewModel>.reactive(
+      viewModelBuilder: () => DevelopmentTrackerViewModel(),
       builder: (context, model, child) {
         return Scaffold(
             body: Center(
@@ -26,9 +24,10 @@ class _SplashScreenViewState extends State<SplashScreenView> {
             padding: const EdgeInsets.all(12.0),
             child: Hero(
               tag: kAppLogo,
-              child: Image.asset(
-                "assets/images/logo.png",
-                height: 150,
+              child: Container(
+                height: 100,
+                width: 100,
+                color: Colors.red,
               ),
             ),
           ),

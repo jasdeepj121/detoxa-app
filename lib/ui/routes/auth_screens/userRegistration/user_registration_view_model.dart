@@ -1,6 +1,7 @@
 import 'package:detoxa/app/locator/locator.dart';
 import 'package:detoxa/services/auth/auth_service.dart';
 import 'package:detoxa/services/navigation/navigation_service.dart';
+import 'package:detoxa/ui/widgets/cards/otpVerifyCard.dart';
 import 'package:detoxa/ui/widgets/dialogs/error_dialog.dart';
 import 'package:detoxa/ui/widgets/dialogs/info_dialog.dart';
 import 'package:detoxa/utils/email_validator.dart';
@@ -72,12 +73,21 @@ class UserRegistrationViewModel extends BaseViewModel {
         return;
       }
       setBusy(true);
+      String otp = await _navigationService.displayDialog(
+        OtpVerificationCard(mobile: mobileController.text.trim()),
+        barrierDismissible: false,
+      );
+      if (otp == null) {
+        setBusy(false);
+        return;
+      }
       bool success = await _authService.registerUser(
         email: emailController.text.trim(),
         name: nameController.text.trim(),
         phone: mobileController.text.trim(),
         password: passwordController.text.trim(),
         termsAccepted: termsAgreed,
+        otp: otp,
       );
       if (success) {
         _navigationService

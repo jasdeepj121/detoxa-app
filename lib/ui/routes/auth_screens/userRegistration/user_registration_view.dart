@@ -48,14 +48,13 @@ class _UserRegistrationViewState extends State<UserRegistrationView> {
                     const Align(
                       alignment: Alignment.centerLeft,
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(8.0),
                         child: BackButton(),
                       ),
                     ),
-                    Container(
-                      height: 100,
-                      width: 100,
-                      color: Colors.blueAccent,
+                    Image.asset(
+                      "assets/images/logo.png",
+                      height: 150,
                     ),
                     // SizedBox(
                     //   width: mediaQuery.size.width,

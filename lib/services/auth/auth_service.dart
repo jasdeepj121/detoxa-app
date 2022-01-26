@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:detoxa/app/appRouter/router.dart';
 import 'package:detoxa/app/locator/locator.dart';
+import 'package:detoxa/dataModels/gender.dart';
 import 'package:detoxa/dataModels/login_response.dart';
 import 'package:detoxa/services/navigation/navigation_service.dart';
 import 'package:detoxa/services/network/config.dart';
@@ -75,6 +79,7 @@ class AuthService with ReactiveServiceMixin {
     @required String name,
     @required String password,
     @required bool termsAccepted,
+    @required String otp,
   }) async {
     try {
       var response = await _networkService.postMethod(
@@ -85,6 +90,8 @@ class AuthService with ReactiveServiceMixin {
           "password": password,
           "full_name": name,
           "is_tnc_accepted": termsAccepted,
+          "session_id": "",
+          "otp": "",
         },
       );
       if (response.statusCode >= 300) throw response;
@@ -129,14 +136,81 @@ class AuthService with ReactiveServiceMixin {
 
   void logout() async {
     try {
-      var response = await _networkService.postMethod(
-        NetworkUrls.signout,
-      );
-      if (response.statusCode >= 300) throw response;
+      // var response = await _networkService.postMethod(
+      //   NetworkUrls.signout,
+      // );
+      // if (response.statusCode >= 300) throw response;
       locator<DeviceStorage>().clearData();
-      locator<NavigationService>().pop();
+      locator<NavigationService>()
+          .pushNamedAndRemoveUntil(Routes.loginView, (p0) => false);
     } catch (e) {
       rethrow;
+    }
+  }
+
+  Future getChildList() async {
+    try {
+      var response = await _networkService.getMethod(
+        NetworkUrls.getChildList,
+      );
+      print(response.data.toString());
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future createChild({
+    String name,
+    DateTime dob,
+    Gender gender,
+    String age,
+    String pictureUrl,
+  }) async {
+    try {
+      var response =
+          await _networkService.postMethod(NetworkUrls.createChild, data: {
+        "full_name": name,
+        "dob": dob.toIso8601String(),
+        "gender": gender == Gender.male ? "Male" : "Female",
+        "picture_url": pictureUrl,
+        "age": age,
+      });
+      print(response.data.toString());
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future deleteChild(String id) async {
+    try {
+      var response = await _networkService.deleteMethod(
+        "${NetworkUrls.deleteChild}/$id",
+      );
+      print(response.data.toString());
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future getChildDetails(String id) async {
+    try {
+      var response = await _networkService.getMethod(
+        "${NetworkUrls.getChildDetails}/$id",
+      );
+      print(response.data.toString());
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future updateChild(String id) async {
+    try {
+      var response = await _networkService.getMethod(
+        "${NetworkUrls.updateChildDetails}/$id",
+      );
+      print(response.data.toString());
+    } catch (e) {
+      print(e.toString());
     }
   }
 }

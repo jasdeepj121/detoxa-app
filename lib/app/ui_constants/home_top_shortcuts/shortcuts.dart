@@ -1,3 +1,4 @@
+import 'package:detoxa/app/appRouter/router.dart';
 import 'package:detoxa/app/ui_constants/colors/app_colors.dart';
 import 'package:detoxa/dataModels/top_home_shortcuts.dart';
 import 'package:flutter/material.dart';
@@ -16,37 +17,37 @@ class ShortcutsData {
         HomeTopSubShortcuts(
           assetName: "",
           color: kChildTrackerColor,
-          link: "",
+          link: Routes.developmentTrackerView,
           text: "Development Tracker",
         ),
         HomeTopSubShortcuts(
           assetName: "",
           color: kChildTrackerColor,
-          link: "",
+          link: Routes.vaccinationTrackerView,
           text: "Vaccination Tracker",
         ),
         HomeTopSubShortcuts(
           assetName: "",
           color: kChildTrackerColor,
-          link: "",
+          link: Routes.growthTrackerView,
           text: "Growth Tracker",
         ),
         HomeTopSubShortcuts(
           assetName: "",
           color: kChildTrackerColor,
-          link: "",
+          link: Routes.eyesightTrackerView,
           text: "Eyesight Tracker",
         ),
         HomeTopSubShortcuts(
           assetName: "",
           color: kChildTrackerColor,
-          link: "",
+          link: Routes.foodTrackerView,
           text: "Food Tracker",
         ),
         HomeTopSubShortcuts(
           assetName: "",
           color: kChildTrackerColor,
-          link: "",
+          link: Routes.handEyeTrackerView,
           text: "Hand & Eye Tracker",
         ),
       ],

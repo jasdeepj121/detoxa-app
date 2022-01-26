@@ -64,16 +64,18 @@ class LoginView extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    SizedBox(
+                      height: mediaQuery.padding.top + kToolbarHeight + 24,
+                    ),
                     Hero(
                       tag: kAppLogo,
-                      child: Container(
+                      child: Image.asset(
+                        "assets/images/logo.png",
                         height: 150,
-                        width: 150,
-                        color: Colors.red,
                       ),
                     ),
-                    const SizedBox(height: 1),
-                    Text("Lets get started"),
+                    const SizedBox(height: 10),
+                    Text("Let's get started"),
                     SizedBox(height: 16),
                     SizedBox(
                       height: 400,
@@ -109,44 +111,44 @@ class LoginView extends StatelessWidget {
                                             ],
                                           ),
                                           _height(16),
-                                          const Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Text("Otp"),
-                                          ),
-                                          _height(4),
-                                          BoxTextFormField(
-                                            controller: model.otpController,
-                                            validator: model.otpValidator,
-                                            keyboardType: TextInputType.number,
-                                            inputFormatters: [
-                                              FilteringTextInputFormatter
-                                                  .digitsOnly
-                                            ],
-                                          ),
-                                          Align(
-                                            alignment: Alignment.centerRight,
-                                            child: TextButton(
-                                              onPressed: model.otpGenerated
-                                                  ? model.timerActive
-                                                      ? null
-                                                      : model.resendOtp
-                                                  : model.generateOTP,
-                                              style: TextButton.styleFrom(
-                                                // padding:EdgeInsets.zero,
-                                                // tapTargetSize:
-                                                // MaterialTapTargetSize.shrinkWrap,
-                                                visualDensity:
-                                                    VisualDensity.compact,
-                                              ),
-                                              child: Text(
-                                                model.otpGenerated
-                                                    ? model.timerActive
-                                                        ? "Time left: ${displayTimeRemaining(model.otpTimeRemaining)}"
-                                                        : "Resend OTP"
-                                                    : "Generate OTP",
-                                              ),
-                                            ),
-                                          ),
+                                          // const Align(
+                                          //   alignment: Alignment.centerLeft,
+                                          //   child: Text("Otp"),
+                                          // ),
+                                          // _height(4),
+                                          // BoxTextFormField(
+                                          //   controller: model.otpController,
+                                          //   validator: model.otpValidator,
+                                          //   keyboardType: TextInputType.number,
+                                          //   inputFormatters: [
+                                          //     FilteringTextInputFormatter
+                                          //         .digitsOnly
+                                          //   ],
+                                          // ),
+                                          // Align(
+                                          //   alignment: Alignment.centerRight,
+                                          //   child: TextButton(
+                                          //     onPressed: model.otpGenerated
+                                          //         ? model.timerActive
+                                          //             ? null
+                                          //             : model.resendOtp
+                                          //         : model.generateOTP,
+                                          //     style: TextButton.styleFrom(
+                                          //       // padding:EdgeInsets.zero,
+                                          //       // tapTargetSize:
+                                          //       // MaterialTapTargetSize.shrinkWrap,
+                                          //       visualDensity:
+                                          //           VisualDensity.compact,
+                                          //     ),
+                                          //     child: Text(
+                                          //       model.otpGenerated
+                                          //           ? model.timerActive
+                                          //               ? "Time left: ${displayTimeRemaining(model.otpTimeRemaining)}"
+                                          //               : "Resend OTP"
+                                          //           : "Generate OTP",
+                                          //     ),
+                                          //   ),
+                                          // ),
                                           // const Text(
                                           //   "Please enter a mobile number to proceed",
                                           // ),
@@ -174,7 +176,7 @@ class LoginView extends StatelessWidget {
                                             )
                                           : RoundedButton(
                                               onPressed: model.login,
-                                              text: "Verify and Login",
+                                              text: "Send Otp",
                                             ),
 
                                       TextButton(
