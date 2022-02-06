@@ -14,12 +14,12 @@ class ShortcutsData {
       color: kChildTrackerColor,
       text: "Child Tracker",
       subShortcuts: [
-        HomeTopSubShortcuts(
-          assetName: "",
-          color: kChildTrackerColor,
-          link: Routes.developmentTrackerView,
-          text: "Development Tracker",
-        ),
+        // HomeTopSubShortcuts(
+        //   assetName: "",
+        //   color: kChildTrackerColor,
+        //   link: Routes.developmentTrackerView,
+        //   text: "Development Tracker",
+        // ),
         HomeTopSubShortcuts(
           assetName: "",
           color: kChildTrackerColor,

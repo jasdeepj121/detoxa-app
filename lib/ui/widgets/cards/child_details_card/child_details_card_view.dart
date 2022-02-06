@@ -4,7 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 
 class ChildDetailsCard extends StatefulWidget {
-  const ChildDetailsCard({Key key}) : super(key: key);
+  final Function onPressed;
+  final String text;
+  const ChildDetailsCard({
+    Key key,
+    this.onPressed,
+    this.text,
+  }) : super(key: key);
 
   @override
   _ChildDetailsCardState createState() => _ChildDetailsCardState();
@@ -98,50 +104,48 @@ class _ChildDetailsCardState extends State<ChildDetailsCard> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Expanded(
-                        flex: 7,
-                        child: DropdownButtonHideUnderline(
-                          child: Container(
-                            height: 45,
-                            padding: const EdgeInsets.all(8.0),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: model.genderList == null
-                                    ? Colors.grey
-                                    : Colors.black,
-                              ),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: DropdownButton<String>(
-                              // alignment: AlignmentDirectional.topEnd,
+                      // Expanded(
+                      //   flex: 7,
+                      //   child: DropdownButtonHideUnderline(
+                      //     child: Container(
+                      //       height: 45,
+                      //       padding: const EdgeInsets.all(8.0),
+                      //       decoration: BoxDecoration(
+                      //         border: Border.all(
+                      //           color: model.genderList == null
+                      //               ? Colors.grey
+                      //               : Colors.black,
+                      //         ),
+                      //         borderRadius: BorderRadius.circular(12),
+                      //       ),
+                      //       child: DropdownButton<String>(
+                      //         // alignment: AlignmentDirectional.topEnd,
 
-                              isExpanded: true,
-                              menuMaxHeight: 200,
-                              value: model.selectedGender,
-                              items: const [
-                                DropdownMenuItem(
-                                  value: "Male",
-                                  child: Text("Male"),
-                                  // alignment: Alignment.center,
-                                ),
-                                DropdownMenuItem(
-                                  value: "Female",
-                                  child: Text("Female"),
-                                ),
-                              ],
-                              onChanged: model.onGenderChanged,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        flex: 6,
-                        child: ElevatedButton(
-                          child: const Text("Generate Report"),
-                          onPressed: model.onGenerateReportPressed,
-                        ),
+                      //         isExpanded: true,
+                      //         menuMaxHeight: 200,
+                      //         value: model.selectedGender,
+                      //         items: const [
+                      //           DropdownMenuItem(
+                      //             value: "Male",
+                      //             child: Text("Male"),
+                      //             // alignment: Alignment.center,
+                      //           ),
+                      //           DropdownMenuItem(
+                      //             value: "Female",
+                      //             child: Text("Female"),
+                      //           ),
+                      //         ],
+                      //         onChanged: model.onGenderChanged,
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+                      // const SizedBox(width: 12),
+                      ElevatedButton(
+                        child: Text(widget.text ?? "Generate Report"),
+                        onPressed: widget.onPressed,
                       ),
                     ],
                   ),

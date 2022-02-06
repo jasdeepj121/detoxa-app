@@ -18,6 +18,7 @@ class DetoxaApp extends StatelessWidget {
     return MaterialApp(
       title: 'Detoxa',
       theme: AppTheme().themeData,
+      // debugShowCheckedModeBanner: ,
       navigatorKey: locator<NavigationService>().navigatorKey,
       initialRoute: Routes.splashScreenView,
       onGenerateRoute: Router().onGenerateRoute,

@@ -2,6 +2,7 @@ import 'package:detoxa/app/appRouter/router.dart';
 import 'package:detoxa/app/locator/locator.dart';
 import 'package:detoxa/services/navigation/navigation_service.dart';
 import 'package:detoxa/services/storage/device_storage_service.dart';
+import 'package:detoxa/ui/widgets/cards/growth_tracker_result_card/growth_tracker_result_card_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -83,5 +84,10 @@ class GrowthTrackerViewModel extends BaseViewModel {
     weightController?.dispose();
     heightController?.dispose();
     ageController?.dispose();
+  }
+
+  void onGeneratePressed() {
+    _navigationService.pop();
+    _navigationService.displayDialog(const GrowthTrackerResultCardView());
   }
 }

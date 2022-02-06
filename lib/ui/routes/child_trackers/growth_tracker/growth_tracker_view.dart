@@ -73,7 +73,9 @@ class _GrowthTrackerViewState extends State<GrowthTrackerView> {
                         ],
                       ),
                     ),
-                    ChildDetailsCard(),
+                    ChildDetailsCard(
+                      onPressed: model.onGeneratePressed,
+                    ),
                   ],
                 ),
               ),

@@ -4,6 +4,9 @@ import 'package:detoxa/app/appRouter/router.dart';
 import 'package:detoxa/app/locator/locator.dart';
 import 'package:detoxa/dataModels/gender.dart';
 import 'package:detoxa/dataModels/login_response.dart';
+import 'package:detoxa/dataModels/otp.dart';
+import 'package:detoxa/dataModels/user.dart';
+import 'package:detoxa/dataModels/user_subscription.dart';
 import 'package:detoxa/services/navigation/navigation_service.dart';
 import 'package:detoxa/services/network/config.dart';
 import 'package:detoxa/services/network/urls.dart';
@@ -11,17 +14,41 @@ import 'package:detoxa/services/storage/device_storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 import 'package:stacked/stacked.dart';
+import 'package:detoxa/dataModels/child.dart';
 
 @lazySingleton
 class AuthService with ReactiveServiceMixin {
-  // final int otpLength = 4;
+  final int otpLength = 6;
   NetworkService _networkService;
   DeviceStorage _storageService;
+  ReactiveValue<User> user = ReactiveValue(User());
+  ReactiveValue<UserSubscription> userSubscription =
+      ReactiveValue(UserSubscription());
+  List<Child> childList = [];
 
   AuthService() {
     _networkService = locator<NetworkService>();
     _storageService = locator<DeviceStorage>();
-    // listenToReactiveValues([]);
+    listenToReactiveValues([
+      user,
+      userSubscription,
+    ]);
+  }
+
+  void extractUserDetails(Map<String, dynamic> json) {
+    try {
+      if (json == null) return;
+      user.value = User.fromJson(json);
+      //update user in storage
+    } catch (_) {}
+  }
+
+  void extractSubsciptionDetails(Map<String, dynamic> json) {
+    try {
+      if (json == null) return;
+      userSubscription.value = UserSubscription.fromJson(json);
+      //update subscription in storage
+    } catch (_) {}
   }
 
   Future<bool> loginWithPassword(String email, String password) async {
@@ -42,13 +69,18 @@ class AuthService with ReactiveServiceMixin {
     }
   }
 
-  Future<bool> loginWithOtp(String mobile, String otp) async {
+  Future<bool> loginWithOtp({
+    @required String mobile,
+    @required Otp otpObject,
+    @required String otp,
+  }) async {
     try {
       var response = await _networkService.postMethod(
         NetworkUrls.loginWithoutPassword,
         data: {
-          "phone": mobile,
-          "login_otp": otp,
+          "mobile": "91$mobile",
+          "session_id": otpObject.details,
+          "otp": otp
         },
       );
       if (response.statusCode >= 300) throw response;
@@ -60,27 +92,28 @@ class AuthService with ReactiveServiceMixin {
     }
   }
 
-  Future<bool> generateOtp(String mobile) async {
+  Future<Otp> generateOtp(String mobile) async {
     try {
       var response = await _networkService.postMethod(
         NetworkUrls.generateSignInOtp,
-        data: {"mobile_no": mobile},
+        data: {"mobile_no": "91$mobile"},
       );
       if (response.statusCode >= 300) throw response;
-      return true;
+      Otp otp = Otp.fromJson(response.data["otp"]);
+      return otp;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<bool> registerUser({
-    @required String email,
-    @required String phone,
-    @required String name,
-    @required String password,
-    @required bool termsAccepted,
-    @required String otp,
-  }) async {
+  Future<bool> registerUser(
+      {@required String email,
+      @required String phone,
+      @required String name,
+      @required String password,
+      @required bool termsAccepted,
+      @required String otp,
+      @required String sessionId}) async {
     try {
       var response = await _networkService.postMethod(
         NetworkUrls.register,
@@ -90,8 +123,8 @@ class AuthService with ReactiveServiceMixin {
           "password": password,
           "full_name": name,
           "is_tnc_accepted": termsAccepted,
-          "session_id": "",
-          "otp": "",
+          "session_id": sessionId,
+          "otp": otp,
         },
       );
       if (response.statusCode >= 300) throw response;
@@ -153,7 +186,10 @@ class AuthService with ReactiveServiceMixin {
       var response = await _networkService.getMethod(
         NetworkUrls.getChildList,
       );
-      print(response.data.toString());
+      childList = List<Child>.from(
+          (response.data["data"] as List).map((e) => Child.fromJson(e)));
+      extractUserDetails(response.data["my_details"]);
+      extractSubsciptionDetails(response.data["subscription_data"]);
     } catch (e) {
       print(e.toString());
     }

@@ -25,4 +25,9 @@ class DeviceStorage {
   Future<bool> clearData() {
     return _prefs.clear();
   }
+
+  Future<bool> setUserChildList(String token) {
+    return _prefs.setString("accessToken", token);
+  }
+
 }

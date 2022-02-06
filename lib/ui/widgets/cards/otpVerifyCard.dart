@@ -3,9 +3,11 @@ import 'dart:io';
 import 'package:detoxa/app/locator/locator.dart';
 import 'package:detoxa/app/ui_constants/colors/app_colors.dart';
 import 'package:detoxa/app/ui_constants/text_styles/app_text_styles.dart';
+import 'package:detoxa/dataModels/otp.dart';
 import 'package:detoxa/services/auth/auth_service.dart';
 import 'package:detoxa/services/navigation/navigation_service.dart';
 import 'package:detoxa/ui/widgets/button/roundedButton.dart';
+import 'package:detoxa/ui/widgets/loaders/circularLoader.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,10 +15,12 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 
 class OtpVerificationCard extends StatefulWidget {
   final String mobile;
+  final Otp otp;
 
   const OtpVerificationCard({
     Key key,
     @required this.mobile,
+    @required this.otp,
   }) : super(key: key);
   @override
   _OtpVerificationCardState createState() => _OtpVerificationCardState();
@@ -24,7 +28,6 @@ class OtpVerificationCard extends StatefulWidget {
 
 class _OtpVerificationCardState extends State<OtpVerificationCard> {
   final NavigationService _navigationService = locator<NavigationService>();
-  final int _otpLength = 5;
   String _otpEntered = "";
   final AuthService _authService = locator<AuthService>();
   bool _isLoading = false;
@@ -37,14 +40,15 @@ class _OtpVerificationCardState extends State<OtpVerificationCard> {
         _isLoading = true;
         _hasError = false;
       });
-      // User response = await _authService.verifyOtpForAnotherPatient(
-      //     widget.mobile, widget.countryCode, _otpEntered);
-      // if (response != null) {
-      //   if (response is User) _navigationService.pop(response);
-      // }
+      await _authService.loginWithOtp(
+        mobile: widget.mobile,
+        otp: _otpEntered,
+        otpObject: widget.otp,
+      );
       setState(() {
         _isLoading = false;
       });
+      _navigationService.pop(true);
     } catch (e) {
       setState(() {
         _isLoading = false;
@@ -52,11 +56,15 @@ class _OtpVerificationCardState extends State<OtpVerificationCard> {
         if (e is DioError) {
           if (e.error is SocketException) {
             _errorMessage = "INTERNET_NOT_AVAILABLEe";
+          } else if (e.response.data is List) {
+            if ((e.response.data as List).isNotEmpty) {
+              _errorMessage = e.response.data.first;
+            }
+          } else {
+            _errorMessage = "An error occured, please try again later.";
           }
-          // _errorMessage = e.response.data["msg"] ?? "";
-          _errorMessage = "An error occured, please try again later.";
         } else {
-          _errorMessage = "ERROR_TRY_AGAIN_LATER";
+          _errorMessage = "An error occured, please try again later.";
         }
       });
     }
@@ -101,7 +109,7 @@ class _OtpVerificationCardState extends State<OtpVerificationCard> {
               ),
               const SizedBox(height: 30),
               PinCodeTextField(
-                length: _otpLength,
+                length: _authService.otpLength,
                 appContext: context,
                 animationType: AnimationType.scale,
                 keyboardType: TextInputType.number,
@@ -137,12 +145,14 @@ class _OtpVerificationCardState extends State<OtpVerificationCard> {
                   style: AppTextStyles.errorMessage,
                 ),
               const SizedBox(height: 12),
-              RoundedButton(
-                text: "Verify",
-                onPressed: (_otpEntered.length == _otpLength && (!_isLoading))
-                    ? _verifyOtp
-                    : null,
-              ),
+              _isLoading
+                  ? const CircularLoader()
+                  : RoundedButton(
+                      text: "Verify",
+                      onPressed: (_otpEntered.length == _authService.otpLength)
+                          ? _verifyOtp
+                          : null,
+                    ),
             ],
           ),
         ),

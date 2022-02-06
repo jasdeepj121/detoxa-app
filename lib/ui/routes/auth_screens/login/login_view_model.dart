@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:detoxa/app/appRouter/router.dart';
 import 'package:detoxa/app/locator/locator.dart';
+import 'package:detoxa/dataModels/otp.dart';
 import 'package:detoxa/services/auth/auth_service.dart';
 import 'package:detoxa/services/navigation/navigation_service.dart';
 import 'package:detoxa/ui/widgets/cards/otpVerifyCard.dart';
@@ -131,7 +132,8 @@ class LoginViewModel extends BaseViewModel {
       }
       if (!_formKey.currentState.validate()) return;
       setBusy(true);
-      if (await _authService.generateOtp(_mobileController.text)) {
+      var otp = await _authService.generateOtp(_mobileController.text);
+      if (otp != null) {
         startResendCodeTimer();
         _otpGeneratedForNumber = _mobileController.text.trim();
       }
@@ -157,7 +159,8 @@ class LoginViewModel extends BaseViewModel {
   void resendOtp() async {
     try {
       setBusy(true);
-      if (await _authService.generateOtp(_mobileController.text)) {
+      var otp = await _authService.generateOtp(_mobileController.text);
+      if (otp != null) {
         startResendCodeTimer();
         _otpGeneratedForNumber = _mobileController.text;
       }
@@ -198,13 +201,17 @@ class LoginViewModel extends BaseViewModel {
       bool success = false;
       setBusy(true);
       if (_loginUsingOTPenabled) {
-        // success = await _authService.loginWithOtp(
-        //     _mobileController.text.trim(), _otpController.text.trim());
-        var response = await _navigationService.displayDialog(
-          OtpVerificationCard(mobile: _mobileController.text.trim()),
+        Otp otp = await _authService.generateOtp(
+          _mobileController.text.trim(),
+        );
+        var success = await _navigationService.displayDialog(
+          OtpVerificationCard(
+            mobile: _mobileController.text.trim(),
+            otp: otp,
+          ),
           barrierDismissible: false,
         );
-        if (response == null) {
+        if (success == null) {
           setBusy(false);
           return;
         }
@@ -222,6 +229,10 @@ class LoginViewModel extends BaseViewModel {
       if (e is DioError) {
         if (e.error is SocketException) {
           message = "Internet not available";
+        } else if (e.response.data is List) {
+          if ((e.response.data as List).isNotEmpty) {
+            message = e.response.data[0];
+          }
         }
       }
       _navigationService.displayDialog(ErrorDialog(message: message));

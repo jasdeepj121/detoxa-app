@@ -44,4 +44,6 @@ flutter:
 
   assets: 
     - assets/images/
+    - assets/images/trackers/hand&eye_tracker/
+    
   

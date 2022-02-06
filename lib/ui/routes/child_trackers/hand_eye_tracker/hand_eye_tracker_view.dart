@@ -20,6 +20,7 @@ class _HandEyeTrackerViewState extends State<HandEyeTrackerView> {
       viewModelBuilder: () => HandEyeTrackerViewModel(),
       builder: (context, model, child) {
         return Scaffold(
+          appBar: AppBar(),
             body: Center(
           child: Padding(
             padding: const EdgeInsets.all(12.0),
