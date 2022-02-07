@@ -201,10 +201,10 @@ class LoginViewModel extends BaseViewModel {
       bool success = false;
       setBusy(true);
       if (_loginUsingOTPenabled) {
-        Otp otp = await _authService.generateOtp(
+        OtpResponse otp = await _authService.generateOtp(
           _mobileController.text.trim(),
         );
-        var success = await _navigationService.displayDialog(
+        success = await _navigationService.displayDialog(
           OtpVerificationCard(
             mobile: _mobileController.text.trim(),
             otp: otp,

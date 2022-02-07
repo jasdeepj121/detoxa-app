@@ -1,25 +1,29 @@
-import 'package:detoxa/ui/widgets/button/roundedButton.dart';
-import 'package:detoxa/ui/widgets/cards/child_details_card/child_details_card_view_model.dart';
+import 'package:detoxa/app/ui_constants/text_styles/app_text_styles.dart';
+import 'package:detoxa/dataModels/child.dart';
+import 'package:detoxa/ui/widgets/cards/child_details_card/child_selection_card_view_model.dart';
+import 'package:detoxa/ui/widgets/loaders/circularLoader.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 
-class ChildDetailsCard extends StatefulWidget {
-  final Function onPressed;
-  final String text;
-  const ChildDetailsCard({
+class ChildSelectionCard extends StatefulWidget {
+  final Function(Child) onPressed;
+  final String buttonText;
+  final bool isLoading;
+  const ChildSelectionCard({
     Key key,
     this.onPressed,
-    this.text,
+    this.buttonText,
+    this.isLoading = false,
   }) : super(key: key);
 
   @override
-  _ChildDetailsCardState createState() => _ChildDetailsCardState();
+  _ChildSelectionCardState createState() => _ChildSelectionCardState();
 }
 
-class _ChildDetailsCardState extends State<ChildDetailsCard> {
+class _ChildSelectionCardState extends State<ChildSelectionCard> {
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<ChildDetailsCardViewModel>.reactive(
+    return ViewModelBuilder<ChildSelectionCardViewModel>.reactive(
       builder: (context, model, _) {
         return Card(
           elevation: 8,
@@ -41,7 +45,7 @@ class _ChildDetailsCardState extends State<ChildDetailsCard> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 //image
-                Text(
+                const Text(
                   "Your child's details:",
                   style: TextStyle(
                     fontSize: 20,
@@ -59,33 +63,28 @@ class _ChildDetailsCardState extends State<ChildDetailsCard> {
                             padding: const EdgeInsets.all(8.0),
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: model.children == null
+                                color: model.childList == null
                                     ? Colors.grey
                                     : Colors.black,
                               ),
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: DropdownButton<String>(
-                              // alignment: AlignmentDirectional.topEnd,
+                            child: DropdownButton<Child>(
                               isExpanded: true,
                               menuMaxHeight: 200,
-                              // itemHeight: 50,
                               value: model.selectedChild,
-                              items: model.children == null
-                                  ? null
+                              items: (model?.childList ?? []).isEmpty
+                                  ? []
                                   : [
-                                      ...model.children.map(
-                                        (e) => DropdownMenuItem(
+                                      ...model.childList.map(
+                                        (e) => DropdownMenuItem<Child>(
+                                          key: ValueKey(e.id),
                                           value: e,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(e),
-                                          ),
+                                          child: Text(e?.fullName ?? ""),
                                         ),
                                       ),
                                     ],
-
-                              onChanged: (_) {},
+                              onChanged: model.childChanged,
                             ),
                           ),
                         ),
@@ -101,8 +100,19 @@ class _ChildDetailsCardState extends State<ChildDetailsCard> {
                     ],
                   ),
                 ),
+                if (model.errorMessage.isNotEmpty)
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 12.0),
+                      child: Text(
+                        model.errorMessage,
+                        style: AppTextStyles.errorMessage,
+                      ),
+                    ),
+                  ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8.0).copyWith(top: 2),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -143,10 +153,16 @@ class _ChildDetailsCardState extends State<ChildDetailsCard> {
                       //   ),
                       // ),
                       // const SizedBox(width: 12),
-                      ElevatedButton(
-                        child: Text(widget.text ?? "Generate Report"),
-                        onPressed: widget.onPressed,
-                      ),
+                      widget.isLoading
+                          ? const Padding(
+                              padding: EdgeInsets.all(9.0),
+                              child: CircularLoader(),
+                            )
+                          : ElevatedButton(
+                              child:
+                                  Text(widget.buttonText ?? "Generate Report"),
+                              onPressed: model.onGenerateReportPressed,
+                            ),
                     ],
                   ),
                 ),
@@ -155,7 +171,10 @@ class _ChildDetailsCardState extends State<ChildDetailsCard> {
           ),
         );
       },
-      viewModelBuilder: () => ChildDetailsCardViewModel(),
+      viewModelBuilder: () => ChildSelectionCardViewModel(),
+      onModelReady: (model) => model.setInitialData(
+        onPressed: widget.onPressed,
+      ),
     );
   }
 }

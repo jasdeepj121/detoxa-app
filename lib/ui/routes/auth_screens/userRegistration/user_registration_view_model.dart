@@ -1,4 +1,6 @@
 import 'package:detoxa/app/locator/locator.dart';
+import 'package:detoxa/dataModels/otp.dart';
+import 'package:detoxa/dataModels/user.dart';
 import 'package:detoxa/services/auth/auth_service.dart';
 import 'package:detoxa/services/navigation/navigation_service.dart';
 import 'package:detoxa/ui/widgets/cards/otpVerifyCard.dart';
@@ -73,22 +75,26 @@ class UserRegistrationViewModel extends BaseViewModel {
         return;
       }
       setBusy(true);
-      String otp = await _navigationService.displayDialog(
-        OtpVerificationCard(mobile: mobileController.text.trim()),
+
+      OtpResponse otpResponse =
+          await _authService.generateOtp(mobileController.text.trim());
+      bool success = await _navigationService.displayDialog(
+        OtpVerificationCard(
+          mobile: mobileController.text.trim(),
+          otp: otpResponse,
+          verifyForLogin: false,
+          user: User(
+            email: emailController.text.trim(),
+            fullName: nameController.text.trim(),
+            password: passwordController.text.trim(),
+          ),
+        ),
         barrierDismissible: false,
       );
-      if (otp == null) {
+      if (success == null) {
         setBusy(false);
         return;
       }
-      bool success = await _authService.registerUser(
-        email: emailController.text.trim(),
-        name: nameController.text.trim(),
-        phone: mobileController.text.trim(),
-        password: passwordController.text.trim(),
-        termsAccepted: termsAgreed,
-        otp: otp,
-      );
       if (success) {
         _navigationService
             .displayDialog(InfoDialog(message: "Successfully registered"))
@@ -98,13 +104,13 @@ class UserRegistrationViewModel extends BaseViewModel {
     } catch (e) {
       setBusy(false);
       String message;
-      if (e is DioError) {
-        message = e.response.data["message"];
-      }
-      if (e is Response) {
-        var da = (e.data["error"] as Map);
-        message = da.values.first.first;
-      }
+      // if (e is DioError) {
+      //   message = e.response.data["message"];
+      // }
+      // if (e is Response) {
+      //   var da = (e.data["error"] as Map);
+      //   message = da.values.first.first;
+      // }
       _navigationService.displayDialog(ErrorDialog(message: message));
     }
   }

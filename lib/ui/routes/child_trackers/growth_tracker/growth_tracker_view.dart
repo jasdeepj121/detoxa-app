@@ -1,7 +1,7 @@
 import 'package:detoxa/app/ui_constants/strings/texts.dart';
 import 'package:detoxa/ui/routes/child_trackers/growth_tracker/growth_tracker_view_model.dart';
 import 'package:detoxa/ui/routes/splashScreen/splash_screen_view_model.dart';
-import 'package:detoxa/ui/widgets/cards/child_details_card/child_details_card_view.dart';
+import 'package:detoxa/ui/widgets/cards/child_details_card/child_selection_card_view.dart';
 import 'package:detoxa/ui/widgets/textfields/box_form_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -73,8 +73,9 @@ class _GrowthTrackerViewState extends State<GrowthTrackerView> {
                         ],
                       ),
                     ),
-                    ChildDetailsCard(
+                    ChildSelectionCard(
                       onPressed: model.onGeneratePressed,
+                      isLoading: model.isBusy,
                     ),
                   ],
                 ),

@@ -1,4 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:detoxa/dataModels/child.dart';
+import 'package:detoxa/dataModels/gender.dart';
 import 'package:detoxa/ui/widgets/button/roundedButton.dart';
 import 'package:detoxa/ui/widgets/cards/growth_tracker_result_card/growth_tracker_result_card_view_model.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +9,20 @@ import 'package:stacked/stacked.dart';
 enum SliderType { height, weight, bmi }
 
 class GrowthTrackerResultCardView extends StatefulWidget {
-  const GrowthTrackerResultCardView({Key key}) : super(key: key);
+  final Child child;
+  final String height;
+  final String weight;
+  final String age;
+  final String bmi;
+
+  const GrowthTrackerResultCardView({
+    Key key,
+    this.child,
+    this.age,
+    this.height,
+    this.weight,
+    this.bmi,
+  }) : super(key: key);
 
   @override
   _GrowthTrackerResultCardViewState createState() =>
@@ -53,7 +68,7 @@ class _GrowthTrackerResultCardViewState
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Child Growth Details"),
+                            const Text("Child Growth Details"),
                             SizedBox(
                               height: 35,
                               width: 35,
@@ -93,17 +108,19 @@ class _GrowthTrackerResultCardViewState
                                             children: [
                                               Expanded(
                                                 child: Align(
-                                                    alignment:
-                                                        Alignment.centerLeft,
-                                                    child: smText(
-                                                        "Name as Entered")),
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child:
+                                                      smText("Name as Entered"),
+                                                ),
                                               ),
                                               Expanded(
                                                 child: Align(
-                                                    alignment:
-                                                        Alignment.centerLeft,
-                                                    child: smText(
-                                                        "Age as Entered")),
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child:
+                                                      smText("Age as Entered"),
+                                                ),
                                               ),
                                               Expanded(
                                                 child: Align(
@@ -124,22 +141,33 @@ class _GrowthTrackerResultCardViewState
                                             children: [
                                               Expanded(
                                                 child: Align(
-                                                    alignment:
-                                                        Alignment.centerLeft,
-                                                    child:
-                                                        smText("ANKITA SINGH")),
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: smText(
+                                                      widget.child?.fullName ??
+                                                          ""),
+                                                ),
                                               ),
                                               Expanded(
                                                 child: Align(
-                                                    alignment:
-                                                        Alignment.centerLeft,
-                                                    child: smText("2 Years")),
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: smText(
+                                                      "${widget.child?.age ?? ""} Years"),
+                                                ),
                                               ),
                                               Expanded(
                                                 child: Align(
-                                                    alignment:
-                                                        Alignment.centerLeft,
-                                                    child: smText("Male")),
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: smText(
+                                                    (widget.child?.gender ??
+                                                                Gender.male) ==
+                                                            Gender.male
+                                                        ? "Male"
+                                                        : "Female",
+                                                  ),
+                                                ),
                                               )
                                             ],
                                           ),
@@ -192,21 +220,30 @@ class _GrowthTrackerResultCardViewState
                                             children: [
                                               Expanded(
                                                 child: Align(
-                                                    alignment:
-                                                        Alignment.centerLeft,
-                                                    child: smText("87 cm")),
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: smText(
+                                                    "${widget.height ?? ""} cm",
+                                                  ),
+                                                ),
                                               ),
                                               Expanded(
                                                 child: Align(
-                                                    alignment:
-                                                        Alignment.centerLeft,
-                                                    child: smText("12 Kg")),
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: smText(
+                                                    "${widget.weight} Kg",
+                                                  ),
+                                                ),
                                               ),
                                               Expanded(
                                                 child: Align(
-                                                    alignment:
-                                                        Alignment.centerLeft,
-                                                    child: smText("25.1")),
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: smText(
+                                                    widget.bmi ?? "",
+                                                  ),
+                                                ),
                                               )
                                             ],
                                           ),

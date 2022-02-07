@@ -12,3 +12,16 @@ class Otp {
         status: json["Status"],
       );
 }
+
+class OtpResponse {
+  String mobile;
+  Otp otp;
+
+  OtpResponse({this.mobile, this.otp});
+
+  factory OtpResponse.fromJson(Map<String, dynamic> json) => OtpResponse(
+      mobile: json["mobile_no"],
+      otp: Otp.fromJson(
+        json["otp"],
+      ));
+}

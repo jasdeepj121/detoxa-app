@@ -24,7 +24,7 @@ class AuthService with ReactiveServiceMixin {
   ReactiveValue<User> user = ReactiveValue(User());
   ReactiveValue<UserSubscription> userSubscription =
       ReactiveValue(UserSubscription());
-  List<Child> childList = [];
+  List<Child> childList;
 
   AuthService() {
     _networkService = locator<NetworkService>();
@@ -70,16 +70,15 @@ class AuthService with ReactiveServiceMixin {
   }
 
   Future<bool> loginWithOtp({
-    @required String mobile,
-    @required Otp otpObject,
+    @required OtpResponse otpResponse,
     @required String otp,
   }) async {
     try {
       var response = await _networkService.postMethod(
         NetworkUrls.loginWithoutPassword,
         data: {
-          "mobile": "91$mobile",
-          "session_id": otpObject.details,
+          "mobile": otpResponse.mobile,
+          "session_id": otpResponse.otp.details,
           "otp": otp
         },
       );
@@ -92,38 +91,38 @@ class AuthService with ReactiveServiceMixin {
     }
   }
 
-  Future<Otp> generateOtp(String mobile) async {
+  Future<OtpResponse> generateOtp(String mobile) async {
     try {
       var response = await _networkService.postMethod(
         NetworkUrls.generateSignInOtp,
         data: {"mobile_no": "91$mobile"},
       );
       if (response.statusCode >= 300) throw response;
-      Otp otp = Otp.fromJson(response.data["otp"]);
+      OtpResponse otp = OtpResponse.fromJson(response.data);
       return otp;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<bool> registerUser(
-      {@required String email,
-      @required String phone,
-      @required String name,
-      @required String password,
-      @required bool termsAccepted,
-      @required String otp,
-      @required String sessionId}) async {
+  Future<bool> registerUser({
+    @required String email,
+    @required String name,
+    @required String password,
+    @required bool termsAccepted,
+    @required String otp,
+    @required OtpResponse otpResponse,
+  }) async {
     try {
       var response = await _networkService.postMethod(
         NetworkUrls.register,
         data: {
-          "mobile": "91$phone",
+          "mobile": otpResponse.mobile,
           "email": email,
           "password": password,
           "full_name": name,
           "is_tnc_accepted": termsAccepted,
-          "session_id": sessionId,
+          "session_id": otpResponse.otp.details,
           "otp": otp,
         },
       );

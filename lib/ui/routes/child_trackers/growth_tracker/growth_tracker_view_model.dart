@@ -1,5 +1,6 @@
 import 'package:detoxa/app/appRouter/router.dart';
 import 'package:detoxa/app/locator/locator.dart';
+import 'package:detoxa/dataModels/child.dart';
 import 'package:detoxa/services/navigation/navigation_service.dart';
 import 'package:detoxa/services/storage/device_storage_service.dart';
 import 'package:detoxa/ui/widgets/cards/growth_tracker_result_card/growth_tracker_result_card_view.dart';
@@ -86,8 +87,19 @@ class GrowthTrackerViewModel extends BaseViewModel {
     ageController?.dispose();
   }
 
-  void onGeneratePressed() {
-    _navigationService.pop();
-    _navigationService.displayDialog(const GrowthTrackerResultCardView());
+  void onGeneratePressed(Child child) {
+    try {
+      setBusy(true);
+      // _navigationService.pop();
+      _navigationService.displayDialog(GrowthTrackerResultCardView(
+        child: child,
+        age: ageController.text.trim(),
+        height: heightController.text.trim(),
+        weight: weightController.text.trim(),
+      ));
+      setBusy(false);
+    } catch (e) {
+      setBusy(false);
+    }
   }
 }

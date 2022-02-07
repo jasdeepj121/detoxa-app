@@ -51,7 +51,7 @@ class RoundedDropDown<T> extends StatelessWidget {
                     (e) => DropdownMenuItem(
                       value: e,
                       child: Padding(
-                        padding: const EdgeInsets.all(6.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
                         child: Text(getText(e)),
                       ),
                     ),

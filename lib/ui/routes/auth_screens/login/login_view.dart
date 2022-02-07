@@ -12,16 +12,6 @@ import 'package:stacked/stacked.dart';
 class LoginView extends StatelessWidget {
   const LoginView({Key key}) : super(key: key);
 
-  // String displayTimeRemaining(int seconds) {
-  //   int min = 0;
-  //   int sec = seconds;
-  //   if (seconds >= 60) {
-  //     min = seconds ~/ 60;
-  //     sec = seconds % 60;
-  //   }
-  //   return "${min.toString().padLeft(2, "0")}:${sec.toString().padLeft(2, "0")}";
-  // }
-
   @override
   Widget build(BuildContext context) {
     var mediaQuery = MediaQuery.of(context);
@@ -30,6 +20,11 @@ class LoginView extends StatelessWidget {
     //   borderSide: BorderSide(color: primaryColor),
     //   borderRadius: BorderRadius.zero,
     // );
+
+    void login(LoginViewModel model) {
+      FocusScope.of(context).requestFocus(FocusNode());
+      model.login();
+    }
 
     String displayTimeRemaining(int seconds) {
       int min = 0;
@@ -175,7 +170,7 @@ class LoginView extends StatelessWidget {
                                               ),
                                             )
                                           : RoundedButton(
-                                              onPressed: model.login,
+                                              onPressed: () => login(model),
                                               text: "Send Otp",
                                             ),
 
@@ -253,7 +248,8 @@ class LoginView extends StatelessWidget {
                                                     ),
                                                   )
                                                 : RoundedButton(
-                                                    onPressed: model.login,
+                                                    onPressed: () =>
+                                                        login(model),
                                                     text: "Login",
                                                   ),
                                             TextButton(

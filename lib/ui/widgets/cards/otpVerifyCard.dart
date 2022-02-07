@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:detoxa/app/locator/locator.dart';
 import 'package:detoxa/app/ui_constants/colors/app_colors.dart';
+import 'package:detoxa/app/ui_constants/strings/error_texts.dart';
 import 'package:detoxa/app/ui_constants/text_styles/app_text_styles.dart';
 import 'package:detoxa/dataModels/otp.dart';
+import 'package:detoxa/dataModels/user.dart';
 import 'package:detoxa/services/auth/auth_service.dart';
 import 'package:detoxa/services/navigation/navigation_service.dart';
 import 'package:detoxa/ui/widgets/button/roundedButton.dart';
@@ -15,12 +17,16 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 
 class OtpVerificationCard extends StatefulWidget {
   final String mobile;
-  final Otp otp;
+  final OtpResponse otp;
+  final bool verifyForLogin;
+  final User user;
 
   const OtpVerificationCard({
     Key key,
     @required this.mobile,
     @required this.otp,
+    this.verifyForLogin = true,
+    this.user,
   }) : super(key: key);
   @override
   _OtpVerificationCardState createState() => _OtpVerificationCardState();
@@ -40,11 +46,21 @@ class _OtpVerificationCardState extends State<OtpVerificationCard> {
         _isLoading = true;
         _hasError = false;
       });
-      await _authService.loginWithOtp(
-        mobile: widget.mobile,
-        otp: _otpEntered,
-        otpObject: widget.otp,
-      );
+      if (widget.verifyForLogin) {
+        await _authService.loginWithOtp(
+          otp: _otpEntered,
+          otpResponse: widget.otp,
+        );
+      } else {
+        await _authService.registerUser(
+          email: widget.user.email,
+          name: widget.user.fullName,
+          password: widget.user.password,
+          termsAccepted: true,
+          otp: _otpEntered,
+          otpResponse: widget.otp,
+        );
+      }
       setState(() {
         _isLoading = false;
       });
@@ -55,16 +71,21 @@ class _OtpVerificationCardState extends State<OtpVerificationCard> {
         _hasError = true;
         if (e is DioError) {
           if (e.error is SocketException) {
-            _errorMessage = "INTERNET_NOT_AVAILABLEe";
+            _errorMessage = kNoInternet;
           } else if (e.response.data is List) {
             if ((e.response.data as List).isNotEmpty) {
               _errorMessage = e.response.data.first;
             }
+          } else if (e.response.data is Map) {
+            _errorMessage = "";
+            (e.response.data as Map).forEach((key, value) {
+              _errorMessage += "$key: $value";
+            });
           } else {
-            _errorMessage = "An error occured, please try again later.";
+            _errorMessage = kErrorOccuredTryLater;
           }
         } else {
-          _errorMessage = "An error occured, please try again later.";
+          _errorMessage = kErrorOccuredTryLater;
         }
       });
     }

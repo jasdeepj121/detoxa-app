@@ -20,12 +20,12 @@ class ShortcutsData {
         //   link: Routes.developmentTrackerView,
         //   text: "Development Tracker",
         // ),
-        HomeTopSubShortcuts(
-          assetName: "",
-          color: kChildTrackerColor,
-          link: Routes.vaccinationTrackerView,
-          text: "Vaccination Tracker",
-        ),
+        // HomeTopSubShortcuts(
+        //   assetName: "",
+        //   color: kChildTrackerColor,
+        //   link: Routes.vaccinationTrackerView,
+        //   text: "Vaccination Tracker",
+        // ),
         HomeTopSubShortcuts(
           assetName: "",
           color: kChildTrackerColor,
@@ -38,18 +38,18 @@ class ShortcutsData {
           link: Routes.eyesightTrackerView,
           text: "Eyesight Tracker",
         ),
-        HomeTopSubShortcuts(
-          assetName: "",
-          color: kChildTrackerColor,
-          link: Routes.foodTrackerView,
-          text: "Food Tracker",
-        ),
-        HomeTopSubShortcuts(
-          assetName: "",
-          color: kChildTrackerColor,
-          link: Routes.handEyeTrackerView,
-          text: "Hand & Eye Tracker",
-        ),
+        // HomeTopSubShortcuts(
+        //   assetName: "",
+        //   color: kChildTrackerColor,
+        //   link: Routes.foodTrackerView,
+        //   text: "Food Tracker",
+        // ),
+        // HomeTopSubShortcuts(
+        //   assetName: "",
+        //   color: kChildTrackerColor,
+        //   link: Routes.handEyeTrackerView,
+        //   text: "Hand & Eye Tracker",
+        // ),
       ],
     ),
     HomeTopMainShortcuts(
