@@ -22,6 +22,7 @@ class _EyesightTrackerViewState extends State<EyesightTrackerView> {
     Size size = MediaQuery.of(context).size;
     return ViewModelBuilder<EyesightTrackerViewModel>.reactive(
       viewModelBuilder: () => EyesightTrackerViewModel(),
+      onModelReady: (model) => model.addImagesToCache(context),
       builder: (context, model, child) {
         return Scaffold(
           appBar: AppBar(),
@@ -66,7 +67,7 @@ class _EyesightTrackerViewState extends State<EyesightTrackerView> {
                   SizedBox(height: 12),
                   EyesightTestNameCard(
                     assetImage: "",
-                    onStartPressed: () {},
+                    onStartPressed: model.onColorBlindnessPressed,
                     testName: "Color Blindess Test",
                   ),
                   EyesightTestNameCard(

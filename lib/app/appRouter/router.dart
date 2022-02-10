@@ -1,6 +1,7 @@
 import 'package:detoxa/ui/routes/auth_screens/login/login_view.dart';
 import 'package:detoxa/ui/routes/auth_screens/userRegistration/user_registration_view.dart';
 import 'package:detoxa/ui/routes/child_trackers/development_tracker/development_tracker_view.dart';
+import 'package:detoxa/ui/routes/child_trackers/eyesight_tracker/color_blindness_test.dart/color_blindness_view.dart';
 import 'package:detoxa/ui/routes/child_trackers/eyesight_tracker/eyesight_tracker_view.dart';
 import 'package:detoxa/ui/routes/child_trackers/food_tracker/food_tracker_view.dart';
 import 'package:detoxa/ui/routes/child_trackers/growth_tracker/growth_tracker_view.dart';
@@ -21,19 +22,15 @@ abstract class Routes {
   static const handEyeTrackerView = '/hand-eye-tracker';
   static const foodTrackerView = '/food-tracker';
   static const eyesightTrackerView = '/eyesight-tracker';
+  static const colorBlindnessTestView = '/color-blindness-test';
+  static const visualAcquityTestView = '/visual-acquity-test';
+  static const astigmatismTestView = '/astigmatism-test';
+  static const cornealCurvatureTestView = '/corneal-curvature-test';
+  static const dryEyeTestView = '/dry-eye-test';
 
-  static const all = {
-    splashScreenView,
-    loginView,
-    userRegistratonView,
-    homePageView,
-    growthTrackerView,
-    developmentTrackerView,
-    vaccinationTrackerView,
-    handEyeTrackerView,
-    foodTrackerView,
-    eyesightTrackerView,
-  };
+  // static const eyesightTrackerView = '/eyesight-tracker';
+  // static const eyesightTrackerView = '/eyesight-tracker';
+  // static const eyesightTrackerView = '/eyesight-tracker';
 }
 
 class Router {
@@ -74,6 +71,32 @@ class Router {
           builder: (context) => const EyesightTrackerView(),
           settings: settings,
         );
+      case Routes.colorBlindnessTestView:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => const ColorBlindnessTestView(),
+          settings: settings,
+        );
+      //   case Routes.visualAcquityTestView:
+      // return MaterialPageRoute<dynamic>(
+      //   builder: (context) => const (),
+      //   settings: settings,
+      // );
+      //   case Routes.astigmatismTestView:
+      // return MaterialPageRoute<dynamic>(
+      //   builder: (context) => const (),
+      //   settings: settings,
+      // );
+      //   case Routes.cornealCurvatureTestView:
+      // return MaterialPageRoute<dynamic>(
+      //   builder: (context) => const (),
+      //   settings: settings,
+      // );
+      //   case Routes.dryEyeTestView:
+      // return MaterialPageRoute<dynamic>(
+      //   builder: (context) => const (),
+      //   settings: settings,
+      // );
+
       case Routes.handEyeTrackerView:
         return MaterialPageRoute<dynamic>(
           builder: (context) => const HandEyeTrackerView(),
