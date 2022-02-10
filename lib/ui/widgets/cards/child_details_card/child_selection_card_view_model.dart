@@ -19,12 +19,12 @@ class ChildSelectionCardViewModel extends BaseViewModel {
 
   Child get selectedChild => _selectedChild;
   // List<String> get genderList => _genderList;
-  // String get selectedGender => _selectedGender ?? _genderList.first;s
-  List<Child> get childList => _children;
+  // String get selectedGender => _selectedGender ?? _genderList.first;
+  List<Child> get childList => _children ?? [];
 
   ChildSelectionCardViewModel() {
     _authService.getChildList().then((_) {
-      _children = _authService.childList;
+      _children = _authService.childList.value;
       notifyListeners();
     });
   }
@@ -34,10 +34,21 @@ class ChildSelectionCardViewModel extends BaseViewModel {
   }
 
   void onAddChildPressed() {
-    _navigationService.displayDialog(
+    _navigationService
+        .displayDialog(
       const AddNewChildCard(),
       barrierDismissible: false,
-    );
+    )
+        .then((value) {
+      if (value ?? false) {
+        _authService.getChildList().then((_) {
+          _selectedChild = null;
+          notifyListeners();
+          _children = _authService.childList.value;
+          notifyListeners();
+        });
+      }
+    });
   }
 
   void onGenerateReportPressed() async {

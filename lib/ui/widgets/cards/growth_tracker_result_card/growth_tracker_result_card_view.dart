@@ -1,6 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:detoxa/app/ui_constants/text_styles/app_text_styles.dart';
 import 'package:detoxa/dataModels/child.dart';
 import 'package:detoxa/dataModels/gender.dart';
+import 'package:detoxa/dataModels/new_growth_tracker.dart';
 import 'package:detoxa/ui/widgets/button/roundedButton.dart';
 import 'package:detoxa/ui/widgets/cards/growth_tracker_result_card/growth_tracker_result_card_view_model.dart';
 import 'package:flutter/material.dart';
@@ -8,35 +10,20 @@ import 'package:stacked/stacked.dart';
 
 enum SliderType { height, weight, bmi }
 
-class GrowthTrackerResultCardView extends StatefulWidget {
-  final Child child;
-  final String height;
-  final String weight;
-  final String age;
-  final String bmi;
+class GrowthTrackerResultCardView extends StatelessWidget {
+  final NewGrowthTrackerReport newGrowthTracker;
 
-  const GrowthTrackerResultCardView({
+  GrowthTrackerResultCardView({
+    this.newGrowthTracker,
     Key key,
-    this.child,
-    this.age,
-    this.height,
-    this.weight,
-    this.bmi,
   }) : super(key: key);
 
-  @override
-  _GrowthTrackerResultCardViewState createState() =>
-      _GrowthTrackerResultCardViewState();
-}
-
-class _GrowthTrackerResultCardViewState
-    extends State<GrowthTrackerResultCardView> {
   final fontGroup = AutoSizeGroup();
   Widget smText(String text) {
     return Text(
       text,
       style: const TextStyle(
-        fontSize: 10,
+        fontSize: 10.5,
       ),
     );
   }
@@ -46,6 +33,7 @@ class _GrowthTrackerResultCardViewState
     Size size = MediaQuery.of(context).size;
     return ViewModelBuilder<GrowthTrackerResultCardViewModel>.reactive(
       viewModelBuilder: () => GrowthTrackerResultCardViewModel(),
+      onModelReady: (model) => model.setInitialData(newGrowthTracker),
       builder: (context, model, child) {
         return Dialog(
           backgroundColor: Colors.white.withOpacity(0.8),
@@ -64,16 +52,19 @@ class _GrowthTrackerResultCardViewState
                   child: Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text("Child Growth Details"),
+                            Text(
+                              "Child Growth Details",
+                              style: AppTextStyles.text2,
+                            ),
                             SizedBox(
                               height: 35,
                               width: 35,
                               child: IconButton(
-                                icon: Icon(Icons.cancel),
+                                icon: const Icon(Icons.cancel),
                                 iconSize: 20,
                                 onPressed: model.onCancelPressed,
                               ),
@@ -81,11 +72,11 @@ class _GrowthTrackerResultCardViewState
                           ],
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Container(
-                        height: 250,
-                        margin: const EdgeInsets.all(16),
-                        padding: const EdgeInsets.all(12).copyWith(right: 0),
+                        height: 240,
+                        margin: const EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(10).copyWith(right: 4),
                         decoration: BoxDecoration(
                           color: Colors.red[50],
                           borderRadius: BorderRadius.circular(12),
@@ -110,23 +101,23 @@ class _GrowthTrackerResultCardViewState
                                                 child: Align(
                                                   alignment:
                                                       Alignment.centerLeft,
-                                                  child:
-                                                      smText("Name as Entered"),
+                                                  child: smText(
+                                                      "Name as Entered: "),
                                                 ),
                                               ),
                                               Expanded(
                                                 child: Align(
                                                   alignment:
                                                       Alignment.centerLeft,
-                                                  child:
-                                                      smText("Age as Entered"),
+                                                  child: smText(
+                                                      "Age as Entered: "),
                                                 ),
                                               ),
                                               Expanded(
                                                 child: Align(
                                                   alignment:
                                                       Alignment.centerLeft,
-                                                  child: smText("Gender"),
+                                                  child: smText("Gender: "),
                                                 ),
                                               )
                                             ],
@@ -144,7 +135,7 @@ class _GrowthTrackerResultCardViewState
                                                   alignment:
                                                       Alignment.centerLeft,
                                                   child: smText(
-                                                      widget.child?.fullName ??
+                                                      newGrowthTracker?.name ??
                                                           ""),
                                                 ),
                                               ),
@@ -153,7 +144,7 @@ class _GrowthTrackerResultCardViewState
                                                   alignment:
                                                       Alignment.centerLeft,
                                                   child: smText(
-                                                      "${widget.child?.age ?? ""} Years"),
+                                                      "${newGrowthTracker?.age ?? ""} Years"),
                                                 ),
                                               ),
                                               Expanded(
@@ -161,7 +152,7 @@ class _GrowthTrackerResultCardViewState
                                                   alignment:
                                                       Alignment.centerLeft,
                                                   child: smText(
-                                                    (widget.child?.gender ??
+                                                    (newGrowthTracker?.gender ??
                                                                 Gender.male) ==
                                                             Gender.male
                                                         ? "Male"
@@ -192,20 +183,20 @@ class _GrowthTrackerResultCardViewState
                                                     alignment:
                                                         Alignment.centerLeft,
                                                     child: smText(
-                                                        "Heights as Entered")),
+                                                        "Heights as Entered: ")),
                                               ),
                                               Expanded(
                                                 child: Align(
                                                     alignment:
                                                         Alignment.centerLeft,
                                                     child: smText(
-                                                        "Weight as Entered")),
+                                                        "Weight as Entered: ")),
                                               ),
                                               Expanded(
                                                 child: Align(
                                                   alignment:
                                                       Alignment.centerLeft,
-                                                  child: smText("Exact BMI"),
+                                                  child: smText("Exact BMI: "),
                                                 ),
                                               )
                                             ],
@@ -223,7 +214,7 @@ class _GrowthTrackerResultCardViewState
                                                   alignment:
                                                       Alignment.centerLeft,
                                                   child: smText(
-                                                    "${widget.height ?? ""} cm",
+                                                    "${newGrowthTracker.height ?? ""} cm",
                                                   ),
                                                 ),
                                               ),
@@ -232,7 +223,7 @@ class _GrowthTrackerResultCardViewState
                                                   alignment:
                                                       Alignment.centerLeft,
                                                   child: smText(
-                                                    "${widget.weight} Kg",
+                                                    "${newGrowthTracker.weight} Kg",
                                                   ),
                                                 ),
                                               ),
@@ -241,7 +232,10 @@ class _GrowthTrackerResultCardViewState
                                                   alignment:
                                                       Alignment.centerLeft,
                                                   child: smText(
-                                                    widget.bmi ?? "",
+                                                    newGrowthTracker.bmi
+                                                            .toStringAsFixed(
+                                                                2) ??
+                                                        "",
                                                   ),
                                                 ),
                                               )
@@ -254,32 +248,33 @@ class _GrowthTrackerResultCardViewState
                                 ],
                               ),
                             ),
-                            SizedBox(height: 8),
-                            AutoSizeText(
-                              "The Height of the child is the normal range",
-                              textAlign: TextAlign.center,
-                              maxLines: 1,
-                              group: fontGroup,
-                            ),
-                            AutoSizeText(
-                              "The Optimal height of the child based on the age and gender is 86cm",
-                              textAlign: TextAlign.center,
-                              maxLines: 1,
-                              group: fontGroup,
-                            ),
-                            SizedBox(height: 8),
-                            AutoSizeText(
-                              "The Weight of the child is the normal range",
-                              textAlign: TextAlign.center,
-                              maxLines: 1,
-                              group: fontGroup,
-                            ),
-                            AutoSizeText(
-                              "The Optimal weight of the child based on the age and gender is 13Kg",
-                              textAlign: TextAlign.center,
-                              maxLines: 1,
-                              group: fontGroup,
-                            ),
+                            // SizedBox(height: 8),
+                            // AutoSizeText(
+                            //   "The Height of the child is the normal range",
+                            //   textAlign: TextAlign.center,
+                            //   maxLines: 1,
+                            //   group: fontGroup,
+                            // ),
+                            // AutoSizeText(
+                            //   "The Optimal height of the child based on the age and gender is 86cm",
+                            //   textAlign: TextAlign.center,
+                            //   maxLines: 2,
+                            //   group: fontGroup,
+                            // ),
+                            // SizedBox(height: 8),
+                            // AutoSizeText(
+                            //   "The Weight of the child is the normal range",
+                            //   textAlign: TextAlign.center,
+                            //   maxLines: 1,
+                            //   group: fontGroup,
+                            // ),
+                            // AutoSizeText(
+                            //   "The Optimal weight of the child based on the age and gender is 13Kg",
+                            //   textAlign: TextAlign.center,
+                            //   maxLines: 2,
+                            //   group: fontGroup,
+                            // ),
+                            const SizedBox(height: 8),
                             Align(
                               alignment: Alignment.center,
                               child: RoundedButton(
@@ -290,7 +285,7 @@ class _GrowthTrackerResultCardViewState
                           ],
                         ),
                       ),
-                      Container(
+                      SizedBox(
                         height: 475,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -298,14 +293,17 @@ class _GrowthTrackerResultCardViewState
                             VerticalSlider(
                               sliderType: SliderType.height,
                               percentValue: 24,
+                              gender: newGrowthTracker.gender,
                             ),
                             VerticalSlider(
                               sliderType: SliderType.weight,
                               percentValue: 99,
+                              gender: newGrowthTracker.gender,
                             ),
                             VerticalSlider(
                               sliderType: SliderType.bmi,
                               percentValue: 24,
+                              gender: newGrowthTracker.gender,
                             ),
                           ],
                         ),
@@ -313,15 +311,15 @@ class _GrowthTrackerResultCardViewState
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            TextButton(
-                              onPressed: model.onSharePressed,
-                              child: Text("Share"),
-                            ),
+                            // TextButton(
+                            //   onPressed: model.onSharePressed,
+                            //   child: Text("Share"),
+                            // ),
                             TextButton(
                               onPressed: model.onDownloadPressed,
-                              child: Text("Download"),
+                              child: const Text("Download"),
                             )
                           ],
                         ),
@@ -341,11 +339,13 @@ class _GrowthTrackerResultCardViewState
 class VerticalSlider extends StatelessWidget {
   final SliderType sliderType;
   final double percentValue;
+  final Gender gender;
 
   const VerticalSlider({
     Key key,
     this.sliderType,
     this.percentValue = 1,
+    this.gender = Gender.male,
   }) : super(key: key);
 
   Widget rotatedText(String text) {
@@ -356,7 +356,7 @@ class VerticalSlider extends StatelessWidget {
           child: Text(
             text,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 10,
             ),
           ),
@@ -457,13 +457,15 @@ class VerticalSlider extends StatelessWidget {
                 Spacer(
                   flex: percentValue.toInt(),
                 ),
-                Container(
-                  height: 100,
-                  width: 50,
-                  decoration: BoxDecoration(
-                    border: Border.all(),
-                  ),
-                ),
+                SizedBox(
+                    height: 100,
+                    width: 50,
+                    // decoration: BoxDecoration(
+                    //   border: Border.all(),
+                    // ),
+                    child: Image.asset(
+                      "assets/images/trackers/growth_tracker/happy-${gender == Gender.male ? "boy" : "girl"}.png",
+                    )),
                 Spacer(
                   flex: factor.toInt(),
                 ),

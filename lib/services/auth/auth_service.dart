@@ -11,8 +11,10 @@ import 'package:detoxa/services/navigation/navigation_service.dart';
 import 'package:detoxa/services/network/config.dart';
 import 'package:detoxa/services/network/urls.dart';
 import 'package:detoxa/services/storage/device_storage_service.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
+import 'package:intl/intl.dart';
 import 'package:stacked/stacked.dart';
 import 'package:detoxa/dataModels/child.dart';
 
@@ -24,7 +26,8 @@ class AuthService with ReactiveServiceMixin {
   ReactiveValue<User> user = ReactiveValue(User());
   ReactiveValue<UserSubscription> userSubscription =
       ReactiveValue(UserSubscription());
-  List<Child> childList;
+  // ReactiveList<Child> childList = ReactiveList.from([]);
+  ReactiveValue<List<Child>> childList = ReactiveValue([]);
 
   AuthService() {
     _networkService = locator<NetworkService>();
@@ -32,6 +35,7 @@ class AuthService with ReactiveServiceMixin {
     listenToReactiveValues([
       user,
       userSubscription,
+      childList,
     ]);
   }
 
@@ -185,10 +189,13 @@ class AuthService with ReactiveServiceMixin {
       var response = await _networkService.getMethod(
         NetworkUrls.getChildList,
       );
-      childList = List<Child>.from(
+      // childList = ReactiveList<Child>.from(
+      //     (response.data["data"] as List).map((e) => Child.fromJson(e)));
+      childList.value = List<Child>.from(
           (response.data["data"] as List).map((e) => Child.fromJson(e)));
       extractUserDetails(response.data["my_details"]);
       extractSubsciptionDetails(response.data["subscription_data"]);
+      notifyListeners();
     } catch (e) {
       print(e.toString());
     }
@@ -199,20 +206,26 @@ class AuthService with ReactiveServiceMixin {
     DateTime dob,
     Gender gender,
     String age,
-    String pictureUrl,
+    String imageFilePath,
   }) async {
     try {
-      var response =
-          await _networkService.postMethod(NetworkUrls.createChild, data: {
+      FormData formData = FormData.fromMap({
+        "picture_url": await MultipartFile.fromFile(imageFilePath),
         "full_name": name,
-        "dob": dob.toIso8601String(),
-        "gender": gender == Gender.male ? "Male" : "Female",
-        "picture_url": pictureUrl,
+        "dob": DateFormat("yyyy-MM-dd").format(dob),
+        "gender": gender == Gender.male
+            ? "Male"
+            : gender == Gender.female
+                ? "Female"
+                : "Others",
         "age": age,
       });
-      print(response.data.toString());
+      var response = await _networkService.postMethod(
+        NetworkUrls.createChild,
+        data: formData,
+      );
     } catch (e) {
-      print(e.toString());
+      rethrow;
     }
   }
 

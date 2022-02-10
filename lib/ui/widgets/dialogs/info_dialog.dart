@@ -30,7 +30,7 @@ class InfoDialog extends StatelessWidget {
       ),
       actions: [
         TextButton(
-          onPressed: _navigationService.pop,
+          onPressed: () => _navigationService.pop(true),
           child: const Text("Okay"),
         )
       ],

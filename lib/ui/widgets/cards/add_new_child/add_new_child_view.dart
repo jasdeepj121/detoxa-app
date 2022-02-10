@@ -8,12 +8,13 @@ import 'package:detoxa/services/auth/auth_service.dart';
 import 'package:detoxa/services/navigation/navigation_service.dart';
 import 'package:detoxa/ui/widgets/button/roundedButton.dart';
 import 'package:detoxa/ui/widgets/dialogs/error_dialog.dart';
+import 'package:detoxa/ui/widgets/dialogs/info_dialog.dart';
 import 'package:detoxa/ui/widgets/loaders/circularLoader.dart';
 import 'package:detoxa/ui/widgets/profile_image.dart';
 import 'package:detoxa/ui/widgets/textfields/box_form_text_field.dart';
 import 'package:detoxa/ui/widgets/textfields/rounded_dropdown.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -33,7 +34,9 @@ class _AddNewChildCardState extends State<AddNewChildCard> {
   final AuthService _authService = locator<AuthService>();
   final NavigationService _navigationService = locator<NavigationService>();
   File _selectedImageFile;
+  File _selectedCroppedImageFile;
   bool _isLoading = false;
+  bool _refreshReqOnPrevScreen = false;
 
   Future displayDatePicker() async {
     var currentDate = DateTime.now();
@@ -71,7 +74,8 @@ class _AddNewChildCardState extends State<AddNewChildCard> {
         );
         if (croppedFile != null) {
           setState(() {
-            _selectedImageFile = croppedFile;
+            _selectedCroppedImageFile = croppedFile;
+            _selectedImageFile = File.fromUri(Uri.file(imageFile.path));
           });
         }
       }
@@ -94,7 +98,7 @@ class _AddNewChildCardState extends State<AddNewChildCard> {
   }
 
   String get getProfileFileName {
-    if (_selectedImageFile == null) {
+    if (_selectedCroppedImageFile == null) {
       return "No file chosen";
     }
     return _selectedImageFile.path.split(Platform.pathSeparator).last;
@@ -105,21 +109,33 @@ class _AddNewChildCardState extends State<AddNewChildCard> {
       setState(() {
         _isLoading = true;
       });
-      String pictureUrl = "";
-      //upload pic
       int age = (DateTime.now().difference(_selectedDate).inDays) ~/ 365;
       await _authService.createChild(
         age: age.toString(),
         dob: _selectedDate,
         gender: _selectedGender,
         name: _nameController.text.trim(),
-        pictureUrl: pictureUrl,
+        imageFilePath: _selectedCroppedImageFile.path,
       );
+      _refreshReqOnPrevScreen = true;
+      _navigationService.displayDialog(
+        InfoDialog(
+          message: "${_nameController.text.trim()} successfully added",
+        ),
+      );
+      _selectedCroppedImageFile = null;
+      _selectedImageFile = null;
+      _nameController.clear();
+      _selectedDate = null;
+      _authService.getChildList();
       setState(() {
         _isLoading = false;
       });
     } catch (e) {
       String errorMessage = "";
+      if (e is DioError) {
+        errorMessage = e.response.toString();
+      }
       setState(() {
         _isLoading = false;
       });
@@ -158,17 +174,18 @@ class _AddNewChildCardState extends State<AddNewChildCard> {
                         Icons.cancel_outlined,
                         color: AppColors.secondary,
                       ),
-                      onPressed: () => Navigator.of(context).pop(),
+                      onPressed: () =>
+                          Navigator.of(context).pop(_refreshReqOnPrevScreen),
                     ),
                   ],
                 ),
                 const Divider(),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.0),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: ProfileImage(
-                      imageUrl: "",
+                      imageFile: _selectedImageFile,
                     ),
                   ),
                 ),
@@ -178,9 +195,13 @@ class _AddNewChildCardState extends State<AddNewChildCard> {
                       onPressed: selectImage,
                       child: const Text("Profile Image"),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(getProfileFileName),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          getProfileFileName,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -303,11 +324,17 @@ class _AddNewChildCardState extends State<AddNewChildCard> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           RoundedButton(
-                              text: "Cancel",
+                            text: "Cancel",
+                            onPressed: () => Navigator.of(context)
+                                .pop(_refreshReqOnPrevScreen),
+                          ),
+                          RoundedButton(
+                              text: "Add",
                               onPressed: () {
-                                Navigator.of(context).pop();
+                                FocusScope.of(context)
+                                    .requestFocus(FocusNode());
+                                addChild();
                               }),
-                          RoundedButton(text: "Add", onPressed: addChild),
                         ],
                       ),
               ],

@@ -1,9 +1,13 @@
 import 'package:detoxa/app/appRouter/router.dart';
 import 'package:detoxa/app/locator/locator.dart';
 import 'package:detoxa/dataModels/child.dart';
+import 'package:detoxa/dataModels/gender.dart';
+import 'package:detoxa/dataModels/new_growth_tracker.dart';
 import 'package:detoxa/services/navigation/navigation_service.dart';
 import 'package:detoxa/services/storage/device_storage_service.dart';
+import 'package:detoxa/services/tracker/tracker_service.dart';
 import 'package:detoxa/ui/widgets/cards/growth_tracker_result_card/growth_tracker_result_card_view.dart';
+import 'package:detoxa/ui/widgets/dialogs/error_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -87,19 +91,44 @@ class GrowthTrackerViewModel extends BaseViewModel {
     ageController?.dispose();
   }
 
-  void onGeneratePressed(Child child) {
+  void onGeneratePressed(Child child) async {
     try {
       setBusy(true);
-      // _navigationService.pop();
-      _navigationService.displayDialog(GrowthTrackerResultCardView(
+      // locator<TrackerService>().getGrowthTrackerList();
+      var newGrowthTracker =
+          await locator<TrackerService>().createGrowthTracker(
+        age: int.parse(ageController.text.trim()),
+        height: int.parse(heightController.text.trim()),
+        weight: int.parse(weightController.text.trim()),
         child: child,
-        age: ageController.text.trim(),
-        height: heightController.text.trim(),
-        weight: weightController.text.trim(),
-      ));
+      );
+      // _navigationService.pop();
+      _navigationService.displayDialog(
+        GrowthTrackerResultCardView(
+          newGrowthTracker: newGrowthTracker,
+          // newGrowthTracker: NewGrowthTracker(
+          //   age: 3,
+          //   bmi: 224.4,
+          //   bmiResult: "Good",
+          //   childId: 24,
+          //   gender: Gender.male,
+          //   height: 24,
+          //   id: 245,
+          //   name: "sfgs",
+          //   parent: 245,
+          //   weight: 25,
+          // ),
+        ),
+        barrierDismissible: false,
+      );
       setBusy(false);
     } catch (e) {
+      String errorMessage = e.toString();
       setBusy(false);
+
+      _navigationService.displayDialog(ErrorDialog(
+        message: errorMessage,
+      ));
     }
   }
 }

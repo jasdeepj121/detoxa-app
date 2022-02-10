@@ -20,7 +20,10 @@ class RoundedDropDown<T> extends StatelessWidget {
       if (data == Gender.female) {
         return "Female";
       }
-      return "Male";
+      if (data == Gender.male) {
+        return "Male";
+      }
+      return "Others";
     }
     if (data is String) {
       return data;

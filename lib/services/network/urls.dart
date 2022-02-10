@@ -14,12 +14,18 @@ class NetworkUrls {
   static String deleteChild = "/user/child/delete";
   static String getChildDetails = "/user/child/details";
   static String updateChildDetails = "/user/child/update";
+
+  //trackers
+  static String createGrowthTracker = "/growth-tracker/user/growth-tracker";
+  static String getGrowthTrackerList =
+      "/growth-tracker/user/get-growth-tracker";
   // static String a = "";
-  // static String a = "";  // static String a = "";
   // static String a = "";
   // static String a = "";  // static String a = "";
   // static String a = "";
   // static String a = "";
   // static String a = "";
 
+  //reports
+  static String downloadGrowthReport = "/report/download-growth-report";
 }

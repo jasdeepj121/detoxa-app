@@ -75,15 +75,15 @@ class _ChildSelectionCardState extends State<ChildSelectionCard> {
                               value: model.selectedChild,
                               items: (model?.childList ?? []).isEmpty
                                   ? []
-                                  : [
-                                      ...model.childList.map(
+                                  : model.childList
+                                      .map(
                                         (e) => DropdownMenuItem<Child>(
-                                          key: ValueKey(e.id),
+                                          // key: ValueKey(e.id),
                                           value: e,
                                           child: Text(e?.fullName ?? ""),
                                         ),
-                                      ),
-                                    ],
+                                      )
+                                      .toList(),
                               onChanged: model.childChanged,
                             ),
                           ),

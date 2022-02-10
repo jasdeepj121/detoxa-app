@@ -27,7 +27,7 @@ dependencies:
   fluttertoast: ^8.0.8
   url_launcher: ^6.0.18
   share_plus: ^3.0.4
-  image_picker: ^0.8.4+4
+  image_picker: ^0.8.4+7
   image_cropper: ^1.4.1
   pin_code_fields: ^7.3.0
 
@@ -45,5 +45,6 @@ flutter:
   assets: 
     - assets/images/
     - assets/images/trackers/hand&eye_tracker/
+    - assets/images/trackers/growth_tracker/
     
   
