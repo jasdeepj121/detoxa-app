@@ -71,23 +71,27 @@ class _EyesightTrackerViewState extends State<EyesightTrackerView> {
                     onStartPressed: model.onColorBlindnessPressed,
                     testName: "Color Blindess Test",
                   ),
-                  // EyesightTestNameCard(
-                  //   assetImage: "",
-                  //   onStartPressed: () {},
-                  //   testName: "Visual Acquity Test",
-                  // ),
-                  // EyesightTestNameCard(
-                  //   assetImage: "",
-                  //   onStartPressed: () {},
-                  //   testName: "Astigmatism Test",
-                  // ),
-                  // EyesightTestNameCard(
-                  //   assetImage: "",
-                  //   onStartPressed: () {},
-                  //   testName: "Corneal Curvature Test",
-                  // ),
                   EyesightTestNameCard(
-                    assetImage: "assets/images/trackers/eyesight_tracker/Dry Eye Test.png",
+                    assetImage:
+                        "assets/images/trackers/eyesight_tracker/Tracker Card2 Image.png",
+                    onStartPressed: model.onVisualAcquityPressed,
+                    testName: "Visual Acquity Test",
+                  ),
+                  EyesightTestNameCard(
+                    assetImage:
+                        "assets/images/trackers/eyesight_tracker/Tracker Card3 Image.png",
+                    onStartPressed: model.onAstigmatismPressed,
+                    testName: "Astigmatism Test",
+                  ),
+                  EyesightTestNameCard(
+                    assetImage:
+                        "assets/images/trackers/eyesight_tracker/Tracker Card4 Image.png",
+                    onStartPressed: model.onCornealCurvaturePressed,
+                    testName: "Corneal Curvature Test",
+                  ),
+                  EyesightTestNameCard(
+                    assetImage:
+                        "assets/images/trackers/eyesight_tracker/Dry Eye Test.png",
                     onStartPressed: model.onDryEyePressed,
                     testName: "Dry Eye Test",
                   ),
@@ -159,7 +163,18 @@ class EyesightTestNameCard extends StatelessWidget {
             height: 70,
             width: 70,
             color: (assetImage ?? "").isEmpty ? Colors.grey : null,
-            child: (assetImage ?? "").isEmpty ? null : Image.asset(assetImage),
+            child: (assetImage ?? "").isEmpty
+                ? null
+                : ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                      color: Colors.grey.withOpacity(0.2),
+                      child: Image.asset(
+                        assetImage,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                ),
           ),
         ],
       ),

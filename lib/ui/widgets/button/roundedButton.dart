@@ -33,21 +33,28 @@ class RoundedButton extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20.0),
                 ),
               ),
-        child: Container(
-          // alignment: Alignment.center,
-          // height: 50,
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: AutoSizeText(
-            text,
-            maxLines: 2,
-            minFontSize: 8,
-            textAlign: TextAlign.center,
-            // style: TextStyles.description1.copyWith(
-            //     // color:
-            //     //     onPressed != null ? Colors.white : AppColors.textColor,
-            //     ),
-            // textAlign: TextAlign.center,
-          ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              // alignment: Alignment.center,
+              // height: 50,
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: AutoSizeText(
+                text,
+                maxLines: 2,
+                minFontSize: 8,
+                textAlign: TextAlign.center,
+                // style: TextStyles.description1.copyWith(
+                //     // color:
+                //     //     onPressed != null ? Colors.white : AppColors.textColor,
+                //     ),
+                // textAlign: TextAlign.center,
+              ),
+            ),
+            if (suffix != null) const SizedBox(width: 8),
+            if (suffix != null) suffix,
+          ],
         ));
   }
 }

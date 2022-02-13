@@ -1,5 +1,6 @@
 import 'package:detoxa/app/ui_constants/colors/app_colors.dart';
 import 'package:detoxa/dataModels/eye_tracker_enums.dart';
+import 'package:detoxa/ui/routes/child_trackers/eyesight_tracker/corneal_curvature_test/corneal_curvature_view_model.dart';
 import 'package:detoxa/ui/routes/child_trackers/eyesight_tracker/dry_eye_test/dry_eye_view_model.dart';
 
 import 'package:detoxa/ui/widgets/button/roundedButton.dart';
@@ -8,32 +9,24 @@ import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:stacked/stacked.dart';
 
-class DryEyeTestView extends StatefulWidget {
-  const DryEyeTestView({Key key}) : super(key: key);
+class CornealCurvatureTestView extends StatefulWidget {
+  const CornealCurvatureTestView({Key key}) : super(key: key);
 
   @override
-  _DryEyeTestViewState createState() => _DryEyeTestViewState();
+  _CornealCurvatureTestViewState createState() =>
+      _CornealCurvatureTestViewState();
 }
 
-class _DryEyeTestViewState extends State<DryEyeTestView> {
-  String headingText(int imageNumber) {
-    if (imageNumber < 6) {
-      return "Have you experienced any of the following over the last week?";
-    } else if (imageNumber < 10) {
-      return "Have problems with your eyes limited you when performing any of the following tasks over the last week?";
-    }
-    return "Have your eyes felt uncomfortable in any of the following situations over the last week?";
-  }
-
+class _CornealCurvatureTestViewState extends State<CornealCurvatureTestView> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return ViewModelBuilder<DryEyeTestViewModel>.reactive(
-      viewModelBuilder: () => DryEyeTestViewModel(),
+    return ViewModelBuilder<CornealCurvatureTestViewModel>.reactive(
+      viewModelBuilder: () => CornealCurvatureTestViewModel(),
       builder: (context, model, child) {
         return Scaffold(
           appBar: AppBar(
-            title: Text("Dry Eye Test"),
+            title: Text("Corneal Curvature Test"),
           ),
           body: SingleChildScrollView(
             child: Padding(
@@ -89,43 +82,85 @@ class _DryEyeTestViewState extends State<DryEyeTestView> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            "${model.imageNumber}. ${headingText(model.imageNumber)}",
-                            textAlign: TextAlign.center,
-                          ),
+                          // Text(
+                          //   "${model.imageNumber}. ${headingText(model.imageNumber)}",
+                          //   textAlign: TextAlign.center,
+                          // ),
                           Padding(
-                            padding: const EdgeInsets.all(16.0),
+                            padding: const EdgeInsets.all(8.0),
                             child: Image.asset(
-                              "assets/images/trackers/eyesight_tracker/dry_eye_${model.imageNumber}.png",
+                              "assets/images/trackers/eyesight_tracker/curvature.png",
                               width: double.maxFinite,
-                              height: 220,
-                              cacheHeight: 220,
+                              height: 340,
+                              cacheHeight: 340,
                             ),
                           ),
-                          Text(
-                            (model.selectedImageDetails[model.imageNumber - 1])
-                                .toUpperCase(),
-                            textAlign: TextAlign.center,
-                          ),
+                          // Text(
+                          //   (model.selectedImageDetails[model.imageNumber - 1])
+                          //       .toUpperCase(),
+                          //   textAlign: TextAlign.center,
+                          // ),
                         ],
                       ),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0).copyWith(top: 16),
-                    child: LinearPercentIndicator(
-                      animateFromLastPercent: true,
-                      percent: model.progress,
+                    child: Column(
+                      children: [
+                        Text("CHOOSE THE EYE"),
+                        const SizedBox(height: 4),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            RoundedButton(
+                              text: "LEFT",
+                              onPressed: model.onLeftEyeSelected,
+                              suffix: (model.isLeftEyeSelected ?? false)
+                                  ? const Icon(Icons.remove_red_eye_outlined)
+                                  : null,
+                            ),
+                            RoundedButton(
+                              text: "RIGHT",
+                              onPressed: model.onRightEyeSelected,
+                              suffix: !(model.isLeftEyeSelected ?? true)
+                                  ? const Icon(Icons.remove_red_eye_outlined)
+                                  : null,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          "Do you see a line in the above image that is darker or sharper ?",
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            RoundedButton(
+                              text: "Yes",
+                              onPressed: model.onYesSelected,
+                            ),
+                            RoundedButton(
+                              text: "No",
+                              onPressed: model.onNoSelected,
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                  Text(
-                    "Test progress: ${(model.progress * 100).toStringAsFixed(0)}",
-                    style: const TextStyle(
-                      color: AppColors.secondary,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  _GenerateOptions(optionSelected: model.selectAnswer),
+                  // Text(
+                  //   "Test progress: ${(model.progress * 100).toStringAsFixed(0)}",
+                  //   style: const TextStyle(
+                  //     color: AppColors.secondary,
+                  //   ),
+                  // ),
+                  const SizedBox(height: 8),
+                  RoundedButton(
+                      text: "Confirm", onPressed: model.onConfirmPressed),
+                  // _GenerateOptions(optionSelected: model.selectAnswer),
                 ],
               ),
             ),

@@ -70,7 +70,7 @@ class _ColorBlindnessTestViewState extends State<ColorBlindnessTestView> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 4),
                   Card(
                     elevation: 12,
                     shape: RoundedRectangleBorder(

@@ -1,9 +1,12 @@
 import 'package:detoxa/ui/routes/auth_screens/login/login_view.dart';
 import 'package:detoxa/ui/routes/auth_screens/userRegistration/user_registration_view.dart';
 import 'package:detoxa/ui/routes/child_trackers/development_tracker/development_tracker_view.dart';
+import 'package:detoxa/ui/routes/child_trackers/eyesight_tracker/astigmatism/astigmation_view.dart';
 import 'package:detoxa/ui/routes/child_trackers/eyesight_tracker/color_blindness_test/color_blindness_view.dart';
+import 'package:detoxa/ui/routes/child_trackers/eyesight_tracker/corneal_curvature_test/corneal_curvature_view.dart';
 import 'package:detoxa/ui/routes/child_trackers/eyesight_tracker/dry_eye_test/dry_eye_view.dart';
 import 'package:detoxa/ui/routes/child_trackers/eyesight_tracker/eyesight_tracker_view.dart';
+import 'package:detoxa/ui/routes/child_trackers/eyesight_tracker/visual_acquity/visual_acquity_view.dart';
 import 'package:detoxa/ui/routes/child_trackers/food_tracker/food_tracker_view.dart';
 import 'package:detoxa/ui/routes/child_trackers/growth_tracker/growth_tracker_view.dart';
 import 'package:detoxa/ui/routes/child_trackers/hand_eye_tracker/hand_eye_tracker_view.dart';
@@ -76,21 +79,21 @@ class Router {
           builder: (context) => const ColorBlindnessTestView(),
           settings: settings,
         );
-      //   case Routes.visualAcquityTestView:
-      // return MaterialPageRoute<dynamic>(
-      //   builder: (context) => const (),
-      //   settings: settings,
-      // );
-      //   case Routes.astigmatismTestView:
-      // return MaterialPageRoute<dynamic>(
-      //   builder: (context) => const (),
-      //   settings: settings,
-      // );
-      //   case Routes.cornealCurvatureTestView:
-      // return MaterialPageRoute<dynamic>(
-      //   builder: (context) => const (),
-      //   settings: settings,
-      // );
+      case Routes.visualAcquityTestView:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => const VisualAcquityTestView(),
+          settings: settings,
+        );
+      case Routes.astigmatismTestView:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => const AstigmatismTestView(),
+          settings: settings,
+        );
+      case Routes.cornealCurvatureTestView:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => const CornealCurvatureTestView(),
+          settings: settings,
+        );
       case Routes.dryEyeTestView:
         return MaterialPageRoute<dynamic>(
           builder: (context) => const DryEyeTestView(),

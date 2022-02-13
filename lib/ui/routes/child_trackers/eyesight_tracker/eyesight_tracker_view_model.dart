@@ -1,19 +1,19 @@
 import 'package:detoxa/app/appRouter/router.dart';
 import 'package:detoxa/app/locator/locator.dart';
 import 'package:detoxa/services/navigation/navigation_service.dart';
-import 'package:detoxa/services/storage/device_storage_service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart';
 import 'package:stacked/stacked.dart';
 
 class EyesightTrackerViewModel extends BaseViewModel {
-  final DeviceStorage _storage = locator<DeviceStorage>();
   final NavigationService _navigationService = locator<NavigationService>();
 
   void addImagesToCache(context) {
     try {
-      List<String> assetsPath = [];
+      List<String> assetsPath = [
+        "assets/images/trackers/eyesight_tracker/Test-astimatisme.png",
+        "assets/images/trackers/eyesight_tracker/visual_acquity.png",
+        "assets/images/trackers/eyesight_tracker/curvature.png",
+      ];
       for (int i = 1; i <= 18; i++) {
         assetsPath.add(
           "assets/images/trackers/eyesight_tracker/color_blindness-${i.toString()}.png",
@@ -27,9 +27,7 @@ class EyesightTrackerViewModel extends BaseViewModel {
       Future.wait(assetsPath.map(
         (e) => precacheImage(AssetImage(e), context),
       ));
-    } catch (e) {
-      print(e.toString());
-    }
+    } catch (_) {}
   }
 
   void onColorBlindnessPressed() {
@@ -38,5 +36,17 @@ class EyesightTrackerViewModel extends BaseViewModel {
 
   void onDryEyePressed() {
     _navigationService.pushNamed(Routes.dryEyeTestView);
+  }
+
+  void onCornealCurvaturePressed() {
+    _navigationService.pushNamed(Routes.cornealCurvatureTestView);
+  }
+
+  void onAstigmatismPressed() {
+    _navigationService.pushNamed(Routes.astigmatismTestView);
+  }
+
+  void onVisualAcquityPressed() {
+    _navigationService.pushNamed(Routes.visualAcquityTestView);
   }
 }
