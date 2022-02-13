@@ -19,6 +19,11 @@ class EyesightTrackerViewModel extends BaseViewModel {
           "assets/images/trackers/eyesight_tracker/color_blindness-${i.toString()}.png",
         );
       }
+      for (int i = 1; i <= 12; i++) {
+        assetsPath.add(
+          "assets/images/trackers/eyesight_tracker/dry_eye_${i.toString()}.png",
+        );
+      }
       Future.wait(assetsPath.map(
         (e) => precacheImage(AssetImage(e), context),
       ));
@@ -29,5 +34,9 @@ class EyesightTrackerViewModel extends BaseViewModel {
 
   void onColorBlindnessPressed() {
     _navigationService.pushNamed(Routes.colorBlindnessTestView);
+  }
+
+  void onDryEyePressed() {
+    _navigationService.pushNamed(Routes.dryEyeTestView);
   }
 }

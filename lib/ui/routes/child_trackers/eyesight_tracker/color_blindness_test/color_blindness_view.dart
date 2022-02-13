@@ -1,12 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:detoxa/app/ui_constants/colors/app_colors.dart';
-import 'package:detoxa/app/ui_constants/strings/texts.dart';
-import 'package:detoxa/app/ui_constants/text_styles/app_text_styles.dart';
-import 'package:detoxa/dataModels/color_blindness_option.dart';
-import 'package:detoxa/ui/routes/child_trackers/eyesight_tracker/color_blindness_test.dart/color_blindness_view_model.dart';
-import 'package:detoxa/ui/routes/child_trackers/eyesight_tracker/eyesight_tracker_view_model.dart';
-import 'package:detoxa/ui/routes/child_trackers/growth_tracker/growth_tracker_view_model.dart';
-import 'package:detoxa/ui/routes/splashScreen/splash_screen_view_model.dart';
+import 'package:detoxa/dataModels/eye_tracker_enums.dart';
+import 'package:detoxa/ui/routes/child_trackers/eyesight_tracker/color_blindness_test/color_blindness_view_model.dart';
+
 import 'package:detoxa/ui/widgets/button/roundedButton.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

@@ -41,6 +41,7 @@ class RoundedButton extends StatelessWidget {
             text,
             maxLines: 2,
             minFontSize: 8,
+            textAlign: TextAlign.center,
             // style: TextStyles.description1.copyWith(
             //     // color:
             //     //     onPressed != null ? Colors.white : AppColors.textColor,

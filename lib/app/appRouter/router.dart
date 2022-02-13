@@ -1,7 +1,8 @@
 import 'package:detoxa/ui/routes/auth_screens/login/login_view.dart';
 import 'package:detoxa/ui/routes/auth_screens/userRegistration/user_registration_view.dart';
 import 'package:detoxa/ui/routes/child_trackers/development_tracker/development_tracker_view.dart';
-import 'package:detoxa/ui/routes/child_trackers/eyesight_tracker/color_blindness_test.dart/color_blindness_view.dart';
+import 'package:detoxa/ui/routes/child_trackers/eyesight_tracker/color_blindness_test/color_blindness_view.dart';
+import 'package:detoxa/ui/routes/child_trackers/eyesight_tracker/dry_eye_test/dry_eye_view.dart';
 import 'package:detoxa/ui/routes/child_trackers/eyesight_tracker/eyesight_tracker_view.dart';
 import 'package:detoxa/ui/routes/child_trackers/food_tracker/food_tracker_view.dart';
 import 'package:detoxa/ui/routes/child_trackers/growth_tracker/growth_tracker_view.dart';
@@ -27,7 +28,6 @@ abstract class Routes {
   static const astigmatismTestView = '/astigmatism-test';
   static const cornealCurvatureTestView = '/corneal-curvature-test';
   static const dryEyeTestView = '/dry-eye-test';
-
   // static const eyesightTrackerView = '/eyesight-tracker';
   // static const eyesightTrackerView = '/eyesight-tracker';
   // static const eyesightTrackerView = '/eyesight-tracker';
@@ -91,12 +91,11 @@ class Router {
       //   builder: (context) => const (),
       //   settings: settings,
       // );
-      //   case Routes.dryEyeTestView:
-      // return MaterialPageRoute<dynamic>(
-      //   builder: (context) => const (),
-      //   settings: settings,
-      // );
-
+      case Routes.dryEyeTestView:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => const DryEyeTestView(),
+          settings: settings,
+        );
       case Routes.handEyeTrackerView:
         return MaterialPageRoute<dynamic>(
           builder: (context) => const HandEyeTrackerView(),

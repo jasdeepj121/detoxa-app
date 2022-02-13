@@ -1,16 +1,31 @@
-import 'package:detoxa/dataModels/color_blindness_option.dart';
+import 'package:detoxa/dataModels/eye_tracker_enums.dart';
+import 'package:detoxa/ui/routes/child_trackers/eyesight_tracker/dry_eye_test/dry_eye_view.dart';
 import 'package:stacked/stacked.dart';
 
-class ColorBlindnessTestViewModel extends BaseViewModel {
-  int _totalImages = 18;
+class DryEyeTestViewModel extends BaseViewModel {
+  int _totalImages = 12;
   int _imageNumber = 1;
   double _progress = 0.0;
-  List<ColorBlindnessOption> _selectedAnswers = [];
+  List<DryEyeOption> _selectedAnswers = [];
+  final List<String> selectedImageDetails = [
+    "Eyes that are sensitive to light",
+    "Eyes that feel gritty",
+    "Painful or sore eyes",
+    "Blurred vision",
+    "Poor vision",
+    "Reading",
+    "Driving at night",
+    "Working with a computer or using a bank machine (ATM)",
+    "Watching TV",
+    "Windy conditions",
+    "Places or areas with low humidity (Very dry)",
+    "Areas that are air conditioned",
+  ];
 
   int get imageNumber => _imageNumber;
   double get progress => _progress;
 
-  ColorBlindnessTestViewModel() {
+  DryEyeTestViewModel() {
     // _progress = (1.0 / _totalImages);
   }
 
@@ -31,7 +46,7 @@ class ColorBlindnessTestViewModel extends BaseViewModel {
   //   notifyListeners();
   // }
 
-  void selectAnswer(ColorBlindnessOption option) {
+  void selectAnswer(DryEyeOption option) {
     if (_progress < 1.0 && _imageNumber < _totalImages) {
       _selectedAnswers.add(option);
       _imageNumber++;
